@@ -1,5 +1,5 @@
 {
-  "name": "@wjfe/workers",
+  "name": "@wjfe/async-workers",
   "version": "0.1.0",
   "description": "Provides thread-safe and atomic synchronization objects, and wrappers to easily use web workers with async/await syntax.",
   "types": "dist/index.d.ts",
