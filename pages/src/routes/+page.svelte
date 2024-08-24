@@ -2,6 +2,7 @@
     import CrossOriginNotIsolated from "$lib/CrossOriginNotIsolated.svelte";
     import Instructions from "$lib/Instructions.svelte";
     import Primes from "$lib/Primes.svelte";
+    import TopBanner from "$lib/TopBanner.svelte";
     import { AsyncWorker } from "../../../dist/workers/AsyncWorker.js";
     import svelteLogo from "../assets/svelte.svg";
     import { exampleWorker } from "../workers/exampleWorker.js";
@@ -9,6 +10,7 @@
 
     const exWorker = new AsyncWorker(new urlWorker(), exampleWorker);
 </script>
+<TopBanner />
 <main>
     <div class="container pt-5">
         <h1>
