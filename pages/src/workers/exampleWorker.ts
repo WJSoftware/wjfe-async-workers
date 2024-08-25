@@ -3,7 +3,7 @@ import { CancellationSource, ManualResetEvent, workerListener, type PostFn, type
 function isPrime(n: number, cancelToken?: Token) {
     // Made unecessarily inefficient for demo purposes.
     for (let i = 2; i <= n / 2; ++i) {
-        CancellationSource.throwIfSignaled(cancelToken);
+        CancellationSource.throwIfSignalled(cancelToken);
         if (n % i === 0) {
             return false;
         }
@@ -14,7 +14,7 @@ function isPrime(n: number, cancelToken?: Token) {
 function isPrimePausable(n: number, pause: Token, cancelToken?: Token) {
     // Made unecessarily inefficient for demo purposes.
     for (let i = 2; i <= n / 2; ++i) {
-        CancellationSource.throwIfSignaled(cancelToken);
+        CancellationSource.throwIfSignalled(cancelToken);
         ManualResetEvent.wait(pause);
         if (n % i === 0) {
             return false;

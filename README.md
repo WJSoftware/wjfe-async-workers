@@ -259,7 +259,7 @@ This package provides synchronization objects that use `Atomics` to cross the th
 This is the web worker equivalent of `AbortController` and provides a token that can be passed to workers in a task's 
 payload.
 
-The worker can use `CancellationSource.isSignalled()` or `CancellationSource.throwIfSignaled()` through polling in order 
+The worker can use `CancellationSource.isSignalled()` or `CancellationSource.throwIfSignalled()` through polling in order 
 to abort the current work:
 
 ```typescript
@@ -268,7 +268,7 @@ import { CancellationSource, type Token } from '@wjfe/async-workers';
 function computeSomeStuff(cancelToken?: Token) {
     for (let i = 0; i < Number.MAX_SAFE_INTEGER; ++i) {
         // No thowing will be done if cancelToken is undefined.
-        CancellationSource.throwIfSignaled(cancelToken);
+        CancellationSource.throwIfSignalled(cancelToken);
         ...
     }
 }
