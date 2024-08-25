@@ -1,6 +1,6 @@
 {
   "name": "@wjfe/async-workers",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Provides thread-safe and atomic synchronization objects, and wrappers to easily use web workers with async/await syntax.",
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
@@ -20,15 +20,15 @@
       "import": "./dist/index.js"
     }
   },
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/WJSoftware/wjfe-async-workers.git"
-	},
-	"author": {
-		"email": "webJose@gmail.com",
-		"name": "José Pablo Ramírez Vargas"
-	},
-	"homepage": "https://wjsoftware.github.io/wjfe-async-workers/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WJSoftware/wjfe-async-workers.git"
+  },
+  "author": {
+    "email": "webJose@gmail.com",
+    "name": "José Pablo Ramírez Vargas"
+  },
+  "homepage": "https://wjsoftware.github.io/wjfe-async-workers/",
   "license": "MIT",
   "devDependencies": {
     "publint": "^0.2.10",
