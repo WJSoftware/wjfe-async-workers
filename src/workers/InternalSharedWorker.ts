@@ -38,7 +38,7 @@ export class InternalSharedWorker implements IWorker {
         processMessage: ProcessMessageFn,
         resolve: (data: any) => void,
         reject: (reason: any) => void
-    ): DisconnectFn {
+    ): DisconnectFn | undefined {
         const listener = this.#listenerFactory(id, processMessage, resolve);
         this.#worker.port.addEventListener('message', listener);
         this.#worker.port.start();

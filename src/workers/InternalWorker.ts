@@ -36,9 +36,10 @@ export class InternalWorker implements IWorker {
         };
     }
 
-    connect(id: number, processMessage: ProcessMessageFn, resolve: (data: any) => void, reject: (reason: any) => void): DisconnectFn {
+    connect(id: number, processMessage: ProcessMessageFn, resolve: (data: any) => void, reject: (reason: any) => void): DisconnectFn | undefined {
         if (this.#terminated) {
             reject(new WorkerTerminatedMessage(id));
+            return;
         }
         const listener = this.#listenerFactory(id, processMessage, resolve);
         this.#worker.addEventListener('message', listener);

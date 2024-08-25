@@ -9,11 +9,13 @@ export class WorkItemInternal<TResult = any> {
     data;
     options;
     cancellationSource;
+    cancelled;
     status: WorkItemStatusEnum;
     disconnect: DisconnectFn | undefined;
 
     constructor(worker: IWorker, data: WorkItemData<TResult>, options: QueueingOptions | undefined) {
         this.status = WorkItemStatus.Enqueued;
+        this.cancelled = false;
         this.worker = worker;
         this.data = {
             ...data,
@@ -45,15 +47,15 @@ export class WorkItemInternal<TResult = any> {
     }
 
     start() {
-        if (this.cancellationSource && CancellationSource.isSignalled(this.cancellationSource.token)) {
-            return;
-        }
         this.disconnect = this.worker.connect(
             this.data.id,
             this.options?.processMessage ?? this.#defaultProcessMessage.bind(this),
             this.data.resolve,
             this.data.reject
         );
+        if (this.cancelled) {
+            return;
+        }
         this.status = WorkItemStatus.Started;
         const wiPayload: AsyncMessage = {
             workItemId: this.data.id,
