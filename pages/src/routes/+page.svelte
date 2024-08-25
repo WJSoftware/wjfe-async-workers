@@ -23,13 +23,13 @@
         <Instructions />
         <div class="row row-cols-sm-2 row-cols-md-3">
             <div class="col">
-                <Primes toNumber={100_000} worker={exWorker} />
+                <Primes toNumber={200_000} worker={exWorker} />
             </div>
             <div class="col">
-                <Primes toNumber={110_000} worker={exWorker} />
+                <Primes toNumber={250_000} worker={exWorker} />
             </div>
             <div class="col">
-                <Primes toNumber={120_000} worker={exWorker} />
+                <Primes toNumber={300_000} worker={exWorker} />
             </div>
         </div>
     </div>

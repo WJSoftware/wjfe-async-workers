@@ -93,6 +93,19 @@
         {/if}
     </div>
     <div class="card-body text-center d-flex flex-column justify-content-center align-items-center">
+        <div class="row w-100">
+            <div class="col">
+                <input
+                    type="range"
+                    id="{id}_toNumber"
+                    bind:value={toNumber}
+                    class="form-range"
+                    min={10_000}
+                    max={1_000_000}
+                    step={10_000}
+                >
+            </div>
+        </div>
         {#if !work}
             <p>Press <span class="badge text-bg-primary">Start</span> to discover primes.</p>
         {:else}
