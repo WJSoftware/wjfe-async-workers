@@ -57,7 +57,7 @@ export type QueueingOptions = {
 }
 
 export interface IWorker {
-    connect(id: number, processMessage: ProcessMessageFn, resolve: (data: any) => void, reject: (reason: any) => void): DisconnectFn;
+    connect(id: number, processMessage: ProcessMessageFn, resolve: (data: any) => void, reject: (reason: any) => void): DisconnectFn | undefined;
     post(message: AsyncMessage, transferables: Transferable[] | undefined): void;
     terminate(): boolean;
 }

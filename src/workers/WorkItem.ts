@@ -43,6 +43,7 @@ export class WorkItem<TResult> {
         if (this.status === WorkItemStatus.Enqueued) {
             this.#internal.data.reject(new CancelledMessage(true));
         }
-        return this.#internal.cancellationSource || !this.#internal.disconnect;
+        this.#internal.cancelled ||= !!this.#internal.cancellationSource || this.status === WorkItemStatus.Cancelled;
+        return !!this.#internal.cancellationSource || this.status === WorkItemStatus.Cancelled;
     }
 }
