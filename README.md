@@ -259,7 +259,7 @@ This package provides synchronization objects that use `Atomics` to cross the th
 This is the web worker equivalent of `AbortController` and provides a token that can be passed to workers in a task's 
 payload.
 
-The worker can use `CancellationSource.isSignalled()` or `CancellationSource.throwIfSignalled()` through polling in order 
+The worker can use `CancellationSource.isSignaled()` or `CancellationSource.throwIfSignaled()` through polling in order 
 to abort the current work:
 
 ```typescript
@@ -268,7 +268,7 @@ import { CancellationSource, type Token } from '@wjfe/async-workers';
 function computeSomeStuff(cancelToken?: Token) {
     for (let i = 0; i < Number.MAX_SAFE_INTEGER; ++i) {
         // No thowing will be done if cancelToken is undefined.
-        CancellationSource.throwIfSignalled(cancelToken);
+        CancellationSource.throwIfSignaled(cancelToken);
         ...
     }
 }
@@ -300,7 +300,7 @@ If you're using `CancellationSource` on your own:
 
 ### ManualResetEvent
 
-This is a synchronization object that can be used to signal multiple threads at once because it will remain signalled 
+This is a synchronization object that can be used to signal multiple threads at once because it will remain signaled 
 until the `reset()` event is invoked.  A typical use case is to use it for pausing a worker's work.
 
 ### AutoResetEvent
@@ -373,7 +373,7 @@ work properly in Node.
 | - | - | - |
 | [x] ManualResetEvent | [x] Simple request/response scenario | [x] Simple request/response scenario |
 | [x] AutoResetEvent | [x] Request/multiple response scenario | [x] Request/multiple response scenario |
-| [ ] Semaphore | [x] Strongly-typed tasks | [x] Strongly-typed tasks |
+| [x] Semaphore | [x] Strongly-typed tasks | [x] Strongly-typed tasks |
 | [x] CancellationSource | [x] Worker termination |  |
-| | [x] Out-of-order work items | [x] Out-of-order work items |
+| [x] Mutex | [x] Out-of-order work items | [x] Out-of-order work items |
 | | [x] Task cancellation | [x] Task cancellation|

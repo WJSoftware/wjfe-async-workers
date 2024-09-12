@@ -3,7 +3,7 @@ import { CancellationSource, ManualResetEvent, workerListener, type PostFn, type
 function isPrime(n: number, cancelToken?: Token) {
     // Made unecessarily inefficient for demo purposes.
     for (let i = 2; i <= n / 2; ++i) {
-        CancellationSource.throwIfSignalled(cancelToken);
+        CancellationSource.throwIfSignaled(cancelToken);
         if (n % i === 0) {
             return false;
         }
@@ -14,8 +14,10 @@ function isPrime(n: number, cancelToken?: Token) {
 function isPrimePausable(n: number, pause: Token, cancelToken?: Token) {
     // Made unecessarily inefficient for demo purposes.
     for (let i = 2; i <= n / 2; ++i) {
-        CancellationSource.throwIfSignalled(cancelToken);
-        ManualResetEvent.wait(pause);
+        CancellationSource.throwIfSignaled(cancelToken);
+        if (!ManualResetEvent.isSignaled(pause)) {
+            ManualResetEvent.wait(pause);
+        }
         if (n % i === 0) {
             return false;
         }
@@ -33,7 +35,7 @@ function getAllPrimes(max: number, pause: Token | undefined, post: PostFn, cance
 }
 
 export const exampleWorker = {
-    sayHello(payload: { name: string; }) {
+    iExistToShowOffIntellisense(payload: { name: string; }) {
         console.log('Hello, %s!', payload.name);
     },
     calculatePrimes(payload: { to: number; pause?: Token }, post: PostFn, cancelToken?: Token) {

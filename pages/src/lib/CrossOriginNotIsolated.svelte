@@ -15,6 +15,8 @@
                     <li><code>ManualResetEvent</code></li>
                     <li><code>AutoResetEvent</code></li>
                     <li><code>CancellationSource</code></li>
+                    <li><code>Semaphore</code></li>
+                    <li><code>Mutex</code></li>
                 </ul>
                 <p>
                     In order to solve this problem in your own project/site, 

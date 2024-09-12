@@ -1,7 +1,9 @@
 <script lang="ts">
+    import { untrack } from "svelte";
     import { CancelledMessage, ManualResetEvent, WorkItemStatus, type AsyncWorker, type WorkItem } from "../../../dist/index.js";
     import { type ExampleWorker } from "../workers/exampleWorker.js";
     import { nextControlId } from "./nextControlId.js";
+    import Stopwatch from "./Stopwatch.svelte";
 
     type Props = {
         toNumber: number;
@@ -24,13 +26,26 @@
     let paused = $state(false);
     let pauseEvent = crossOriginIsolated ? new ManualResetEvent() : undefined;
     const id = nextControlId();
+    let sw: Stopwatch;
 
     $effect(() => {
-        if (paused) {
+        if (pausable && paused) {
             pauseEvent?.reset();
+            untrack(() => sw.stop());
+        }
+        else if (pausable && running) {
+            pauseEvent?.signal();
+            untrack(() => sw.start());
+        }
+    });
+
+    $effect(() => {
+        if (running) {
+            untrack(() => sw.reset());
+            untrack(() => sw.start());
         }
         else {
-            pauseEvent?.signal();
+            untrack(() => sw.stop());
         }
     });
 
@@ -158,6 +173,9 @@
             >
                 Cancel process
             </button>
+        </li>
+        <li class="list-group-item text-center fs-2">
+            <Stopwatch bind:this={sw} />
         </li>
     </ul>
 </div>
