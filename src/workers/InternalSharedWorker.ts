@@ -20,7 +20,6 @@ export class InternalSharedWorker implements IWorker {
     #listenerFactory(id: number, processMessage: ProcessMessageFn, resolve: (data:any) => void) {
         return (ev: MessageEvent) => {
             if (isTaskCancelledMessage(ev.data) && ev.data.workItemId === id) {
-                console.log('Received a cancellation: %o', ev.data);
                 this.#rejectMap.get(id)?.(new CancelledMessage(false));
             } else if (isAsyncResponse(ev.data) && (ev.data.workItemId === id)) {
                 if (processMessage(ev.data.payload)) {

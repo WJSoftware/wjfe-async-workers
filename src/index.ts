@@ -1,10 +1,12 @@
 // cancellation
-export * from "./cancellation/CancellationSource.js";
-export * from "./cancellation/CancelledMessage.js";
-export * from "./cancellation/TaskCancelledError.js";
-// events
-export * from "./events/AutoResetEvent.js";
-export * from "./events/ManualResetEvent.js";
+export { CancellationSource } from "./cancellation/CancellationSource.js";
+export { CancelledMessage } from "./cancellation/CancelledMessage.js";
+export { TaskCancelledError } from "./cancellation/TaskCancelledError.js";
+// synchronization objects
+export { AutoResetEvent } from "./sync/AutoResetEvent.js";
+export { ManualResetEvent } from "./sync/ManualResetEvent.js";
+export { Mutex } from "./sync/Mutex.js";
+export { Semaphore } from "./sync/Semaphore.js";
 // workers
 export * from './workers/AsyncWorker.js';
 export * from "./workers/workerListener.js";
@@ -37,5 +39,3 @@ export type AsyncMessage<Tasks extends Record<string, (...args: any) => any>> = 
     cancelToken?: Token;
     payload?: WorkerTasks<Tasks>[keyof Tasks]['payload'];
 };
-
-export type ProcessMessageFn = (payload: any, cancelToken?: Token) => boolean;
