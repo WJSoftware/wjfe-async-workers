@@ -28,7 +28,7 @@ These are the recommended steps to get things going:
 1. Write the web worker as an object whose properties are the discrete worker tasks.  Use `workerListener()` to listen 
 to incoming messages.
 2. Export the tasks worker object.
-3. Create a new instance of `Worker` the way is recommended by your bundler.  Usually with the syntax 
+3. Create a new instance of `Worker` the way is recommended by your bundler, usually with the syntax 
 `new Worker("./myworker.js", impot.meta.url)`.  However, this forces you to write the worker in JavaScript, at least 
 for Vite-powered projects.
 4. Create a new instance of `AsyncWorker` (from this package) by passing the worker object and the tasks object from 
@@ -305,9 +305,23 @@ until the `reset()` event is invoked.  A typical use case is to use it for pausi
 
 ### AutoResetEvent
 
-This is a synchronization objec that signals a single thread because once awaited, its state is automatically reset.
+This is a synchronization object that signals a single thread because once awaited, its state is automatically reset.
 
 Typical use cases involve the need to unlock a single thread at a time.
+
+### Semaphore
+
+Semaphores are synchronization objects that are created with an initial capacity (a positive, non-zero integer).  This 
+capacity can be thought as the number of threads that can access a resource simultaneously.
+
+Use semaphores when you want to limit access to a **thread-safe** resource.  For example:  A battery of workers that 
+upload files to a server via an HTTP request fulfills this description.  In order to not overwhelm the HTTP server, a 
+semaphore could be used to limit the number of files that can be simultaneously uploaded.
+
+### Mutex
+
+A mutex is a semaphore of capacity 1.  Its name comes from the combination of the words _"mutually exclusive"_.  Since 
+its capacity is 1, only one thread at a time can be the owner of a mutex.
 
 ## The WorkItem Class
 
