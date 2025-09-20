@@ -12,7 +12,7 @@ export class SemaphoreInternal extends SyncObject {
     #disabled;
     constructor(identifier: number, capacity: number, createDisabled: boolean) {
         if (capacity <= 0 || !Number.isInteger(capacity)) {
-            throw new Error("A semaphore's capacity can only be a postive integer.");
+            throw new Error("A semaphore's capacity can only be a positive integer.");
         }
         super(identifier, createDisabled ? 0 : capacity);
         this.#capacity = capacity;
@@ -91,7 +91,6 @@ export async function acquireAsync(identifierData: IdentifierData, token: Token,
 export class Semaphore extends SemaphoreInternal {
     constructor(capacity: number, createDisabled: boolean = false) {
         super(semaphoreIdentityData[0], capacity, createDisabled);
-        const x = Semaphore.acquire(this.token, 1000);
     }
     /**
      * Acquires a slot from the specified semaphore's token.
