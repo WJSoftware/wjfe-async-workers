@@ -1,4 +1,4 @@
-import { type Token } from "../workers";
+import type { Token } from "../workers.d.ts";
 
 export type IdentifierData = [
     number,

@@ -1,6 +1,6 @@
-import { CancelledMessage } from "../cancellation/CancelledMessage";
-import { WorkItemStatus } from "./AsyncWorker";
-import { WorkItemInternal } from "./WorkItemInternal";
+import { CancelledMessage } from "../cancellation/CancelledMessage.js";
+import { WorkItemStatus } from "./AsyncWorker.js";
+import { WorkItemInternal } from "./WorkItemInternal.js";
 
 /**
  * Defines a work item object, which is the abstract representation of a worker's task.

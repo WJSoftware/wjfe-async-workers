@@ -1,6 +1,6 @@
-import { Token } from "../workers";
-import { mutexIdentityData } from "./identifiers";
-import { acquire, acquireAsync, SemaphoreInternal, type Releaser } from "./Semaphore";
+import type { Token } from "../workers.d.ts";
+import { mutexIdentityData } from "./identifiers.js";
+import { acquire, acquireAsync, SemaphoreInternal, type Releaser } from "./Semaphore.js";
 
 /**
  * Synchronization object that can be used to grant a single thread exclusive access to a resource or critical section.

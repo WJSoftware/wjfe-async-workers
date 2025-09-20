@@ -1,4 +1,4 @@
-import { Token } from "../workers";
+import type { Token } from "../workers.d.ts";
 
 /**
  * Base class for synchronization objects.
