@@ -55,7 +55,7 @@ export class AsyncWorker<Tasks extends Record<string, (...args: any[]) => any>> 
     #taskRunning;
     #enqueue;
     constructor(worker: Worker | SharedWorker, tasks: Tasks) {
-        this.#iWorker = worker instanceof Worker ? new InternalWorker(worker) : new InternalSharedWorker(worker);
+        this.#iWorker = Object.getPrototypeOf(worker).name === 'Worker' ? new InternalWorker(worker as Worker) : new InternalSharedWorker(worker as SharedWorker);
         this.#queue = new Queue<WorkItemInternal>();
         this.#taskRunning = false;
         this.#enqueue = Object.keys(tasks).reduce((prev, curr) => {
