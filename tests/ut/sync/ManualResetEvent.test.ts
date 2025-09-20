@@ -2,7 +2,7 @@ import { describe, it, beforeEach } from 'mocha';
 import { expect } from 'chai';
 import { sinon } from '../../setup.js';
 import { ManualResetEvent } from '../../../src/sync/ManualResetEvent.js';
-import { testManualResetEventWaitInWorker, tokenTypeTest } from '../helpers/helpers.js';
+import { delay, testManualResetEventWaitInWorker, tokenTypeTest } from '../helpers/helpers.js';
 import { manualResetEventIdentityData } from '../../../src/sync/identifiers.js';
 import { AutoResetEvent } from '../../../src/sync/AutoResetEvent.js';
 
@@ -80,6 +80,7 @@ describe('ManualResetEvent', () => {
         it('Should wait and succeed when signal becomes available.', async () => {
             const waitComplete = (await testManualResetEventWaitInWorker(eventObj.token, 1000)).wait;
             
+            await delay(50); // Ensure the worker is waiting
             eventObj.signal();
 
             const result = await waitComplete;
