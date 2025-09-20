@@ -6,9 +6,10 @@ import { InternalWorker } from "./InternalWorker.js";
 import { WorkItem } from "./WorkItem.js";
 import { WorkItemInternal } from "./WorkItemInternal.js";
 
-type EnqueueFn<Fn extends (...args: any[]) => any> = (payload: Parameters<Fn>[0], options?: QueueingOptions) => WorkItem<ReturnType<Fn>>;
+export type EnqueueFn<Fn extends ((...args: any[]) => any) = (() => any)> =
+    (payload: Fn extends () => any ? void : Parameters<Fn>[0], options?: QueueingOptions) => WorkItem<ReturnType<Fn>>;
 
-type Enqueue<T extends Record<string, (...args: any[]) => any>> = {
+export type Enqueue<T extends Record<string, (...args: any[]) => any>> = {
     [K in keyof T]: EnqueueFn<T[K]>;
 };
 
