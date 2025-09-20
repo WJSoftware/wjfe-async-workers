@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { sinon } from '../../setup.js';
 import { AutoResetEvent } from '../../../src/sync/AutoResetEvent.js';
 import { autoResetEventIdentityData } from '../../../src/sync/identifiers.js';
-import { testAutoResetEventWaitInWorker } from '../helpers/helpers.js';
+import { delay, testAutoResetEventWaitInWorker } from '../helpers/helpers.js';
 import { ManualResetEvent } from '../../../src/sync/ManualResetEvent.js';
 
 describe('AutoResetEvent', () => {
@@ -87,6 +87,7 @@ describe('AutoResetEvent', () => {
         it('Should wait and succeed when signal becomes available.', async () => {
             const waitComplete = (await testAutoResetEventWaitInWorker(eventObj.token, 1000)).wait;
             
+            await delay(50); // Ensure the worker is waiting
             eventObj.signal();
             
             const result = await waitComplete;
