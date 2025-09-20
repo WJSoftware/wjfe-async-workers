@@ -19,7 +19,17 @@ export type WorkerTasks<T extends Record<string, (...args: any) => any>> = {
 /**
  * Message sent to a worker.
  */
-export type AsyncMessage = {
+export type AsyncMessage<Tasks extends Record<string, (...args: any) => any>> = {
+    task: keyof Tasks;
+    workItemId: number;
+    cancelToken?: Token;
+    payload?: WorkerTasks<Tasks>[keyof Tasks]['payload'];
+};
+
+/**
+ * Message sent to a worker.
+ */
+export type AsyncMessageUntyped = {
     workItemId: number;
     task: string;
     cancelToken?: Token;
@@ -58,7 +68,7 @@ export type QueueingOptions = {
 
 export interface IWorker {
     connect(id: number, processMessage: ProcessMessageFn, resolve: (data: any) => void, reject: (reason: any) => void): DisconnectFn | undefined;
-    post(message: AsyncMessage, transferables: Transferable[] | undefined): void;
+    post(message: AsyncMessageUntyped, transferables: Transferable[] | undefined): void;
     terminate(): boolean;
 }
 

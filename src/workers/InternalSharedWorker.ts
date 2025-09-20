@@ -1,5 +1,5 @@
 import { CancelledMessage } from "../cancellation/CancelledMessage.js";
-import type { AsyncMessage, AsyncResponse, DisconnectFn, IWorker, ProcessMessageFn, RejectFn, TaskCancelledMessage } from "../workers.js";
+import type { AsyncMessageUntyped, AsyncResponse, DisconnectFn, IWorker, ProcessMessageFn, RejectFn, TaskCancelledMessage } from "../workers.js";
 
 function isTaskCancelledMessage(message: any): message is TaskCancelledMessage {
     return message?.payload?._$cancelled === true && typeof message.workItemId === 'number';
@@ -50,7 +50,7 @@ export class InternalSharedWorker implements IWorker {
         };
     }
 
-    post(message: AsyncMessage, transferables: Transferable[] | undefined): void {
+    post(message: AsyncMessageUntyped, transferables: Transferable[] | undefined): void {
         this.#worker.port.postMessage(message, { transfer: transferables });
     }
 
