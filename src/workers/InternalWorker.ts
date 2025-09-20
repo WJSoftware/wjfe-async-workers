@@ -1,5 +1,5 @@
 import { CancelledMessage } from "../cancellation/CancelledMessage.js";
-import type { AsyncMessage, AsyncResponse, DisconnectFn, IWorker, ProcessMessageFn, RejectFn, TaskCancelledMessage } from "../workers.js";
+import type { AsyncMessageUntyped, AsyncResponse, DisconnectFn, IWorker, ProcessMessageFn, RejectFn, TaskCancelledMessage } from "../workers.js";
 import { WorkerTerminatedMessage } from "./WorkerTerminatedMessage.js";
 
 function isTaskCancelledMessage(message: any): message is TaskCancelledMessage {
@@ -51,7 +51,7 @@ export class InternalWorker implements IWorker {
         };
     }
 
-    post(message: AsyncMessage, transferables: Transferable[] | undefined): void {
+    post(message: AsyncMessageUntyped, transferables: Transferable[] | undefined): void {
         if (this.#terminated) {
             throw new Error('The worker has been terminated and cannot accept new messages.');
         }

@@ -1,12 +1,12 @@
 import { TaskCancelledError } from "../cancellation/TaskCancelledError.js";
-import { AsyncMessage, AsyncResponse } from "../workers.js";
+import type { AsyncMessageUntyped, AsyncResponse } from "../workers.d.ts";
 
 /**
  * Defines the function provided to worker tasks so workers can communicate back to the calling thread.
  */
 export type PostFn = (payload: any, options?: WindowPostMessageOptions) => void;
 
-function isAsyncMessage(msg: any): msg is AsyncMessage {
+function isAsyncMessage(msg: any): msg is AsyncMessageUntyped {
     return typeof msg.workItemId === 'number' && msg.task && typeof msg.task === 'string';
 }
 
@@ -24,7 +24,7 @@ function post(workItemId: number, payload: any, options?: WindowPostMessageOptio
  * @returns The sought listener.
  */
 export function workerListener<Tasks extends Record<string, (...args: any) => any>>(workerTasks: Tasks) {
-    return (ev: MessageEvent<AsyncMessage>) => {
+    return (ev: MessageEvent<AsyncMessageUntyped>) => {
         if (!isAsyncMessage(ev.data)) {
             return;
         }

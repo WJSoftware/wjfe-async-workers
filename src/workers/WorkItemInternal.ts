@@ -1,8 +1,8 @@
 import { CancellationSource } from "../cancellation/CancellationSource.js";
 import { CancelledMessage } from "../cancellation/CancelledMessage.js";
-import type { AsyncMessage, DisconnectFn, IWorker, QueueingOptions, WorkItemData } from "../workers.js";
+import type { AsyncMessageUntyped, DisconnectFn, IWorker, QueueingOptions, WorkItemData } from "../workers.js";
 import { WorkItemStatus, type WorkItemStatusEnum } from "./AsyncWorker.js";
-import { WorkerTerminatedMessage } from "./WorkerTerminatedMessage";
+import { WorkerTerminatedMessage } from "./WorkerTerminatedMessage.js";
 
 export class WorkItemInternal<TResult = any> {
     worker;
@@ -13,7 +13,7 @@ export class WorkItemInternal<TResult = any> {
     status: WorkItemStatusEnum;
     disconnect: DisconnectFn | undefined;
 
-    constructor(worker: IWorker, data: WorkItemData<TResult>, options: QueueingOptions | undefined) {
+    constructor(worker: IWorker, data: WorkItemData<TResult>, options?: QueueingOptions | undefined) {
         this.status = WorkItemStatus.Enqueued;
         this.cancelled = false;
         this.worker = worker;
@@ -57,7 +57,7 @@ export class WorkItemInternal<TResult = any> {
             return;
         }
         this.status = WorkItemStatus.Started;
-        const wiPayload: AsyncMessage = {
+        const wiPayload: AsyncMessageUntyped = {
             workItemId: this.data.id,
             task: this.data.task,
             cancelToken: this.cancellationSource?.token,
