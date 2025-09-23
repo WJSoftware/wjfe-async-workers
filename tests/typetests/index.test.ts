@@ -45,12 +45,15 @@ describe("Type Tests", () => {
 
         type TaskTypes = WorkerTasks<TestTasks>;
         
-        expect<TaskTypes['add']['payload']>().type.toBe<{ a: number; b: number }>();
-        expect<TaskTypes['add']['return']>().type.toBe<number>();
-        expect<TaskTypes['greet']['payload']>().type.toBe<{ name: string }>();
-        expect<TaskTypes['greet']['return']>().type.toBe<string>();
-        expect<TaskTypes['noArgs']['payload']>().type.toBe<undefined>();
-        expect<TaskTypes['noArgs']['return']>().type.toBe<void>();
+        expect<Pick<TaskTypes, "add">>().type.toBe<{
+            add: { payload: { a: number; b: number }; return: number }
+        }>();
+        expect<Pick<TaskTypes, "greet">>().type.toBe<{
+            greet: { payload: { name: string }; return: string }
+        }>();
+        expect<Pick<TaskTypes, "noArgs">>().type.toBe<{ 
+            noArgs: { payload: undefined; return: void }
+        }>();
     });
 
     test("AsyncMessage should have correct structure", () => {
@@ -58,23 +61,21 @@ describe("Type Tests", () => {
             compute: (args: { value: number }) => string;
         };
 
-        type Message = AsyncMessage<TestTasks>;
-        
-        expect<Message['task']>().type.toBe<keyof TestTasks>();
-        expect<Message['workItemId']>().type.toBe<number>();
-        expect<Message['cancelToken']>().type.toBe<Token | undefined>();
-        expect<Message['payload']>().type.toBe<{ value: number } | undefined>();
+        expect<AsyncMessage<TestTasks>>().type.toBe<{
+            task: "compute";
+            workItemId: number;
+            cancelToken?: Token | undefined;
+            payload?: { value: number } | undefined;
+        }>();
     });
 
     test("CancellationSource static methods should have correct signatures", () => {
         const token: Token = new Int32Array(1);
         
-        expect(CancellationSource.isSignaled).type.toBeCallableWith(token);
         expect(CancellationSource.isSignaled(token)).type.toBe<boolean>();
         
-        expect(CancellationSource.throwIfSignaled).type.toBeCallableWith(token);
-        expect(CancellationSource.throwIfSignaled).type.toBeCallableWith(undefined);
         expect(CancellationSource.throwIfSignaled(token)).type.toBe<void>();
+        expect(CancellationSource.throwIfSignaled(undefined)).type.toBe<void>();
     });
 
     test("Queue should not accept wrong types", () => {

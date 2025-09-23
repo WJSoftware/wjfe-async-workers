@@ -22,8 +22,8 @@ export type WorkerTasks<T extends Record<string, (...args: any) => any>> = {
 export type AsyncMessage<Tasks extends Record<string, (...args: any) => any>> = {
     task: keyof Tasks;
     workItemId: number;
-    cancelToken?: Token;
-    payload?: WorkerTasks<Tasks>[keyof Tasks]['payload'];
+    cancelToken?: Token | undefined;
+    payload?: WorkerTasks<Tasks>[keyof Tasks]['payload'] | undefined;
 };
 
 /**
@@ -32,7 +32,7 @@ export type AsyncMessage<Tasks extends Record<string, (...args: any) => any>> = 
 export type AsyncMessageUntyped = {
     workItemId: number;
     task: string;
-    cancelToken?: Token;
+    cancelToken?: Token | undefined;
     payload?: any;
 };
 
