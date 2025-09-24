@@ -33,6 +33,9 @@
   },
   "homepage": "https://wjsoftware.github.io/wjfe-async-workers/",
   "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "devDependencies": {
     "@types/chai": "^5.2.2",
     "@types/mocha": "^10.0.10",
