@@ -22,7 +22,7 @@ export class Queue<TItem> {
         return this.#tail++;
     }
 
-    dequeue() {
+    dequeue(): TItem {
         if (this.isEmpty) {
             throw new Error("Cannot dequeue from an empty queue.");
         }
@@ -31,7 +31,7 @@ export class Queue<TItem> {
         return item;
     }
 
-    peek() {
+    peek(): TItem {
         if (this.isEmpty) {
             throw new Error("Cannot peek on an empty queue.");
         }

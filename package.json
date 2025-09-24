@@ -11,7 +11,7 @@
     "test": "npm run test:unit && npm run test:types",
     "test:unit": "ts-mocha -n loader=ts-node/esm -p ./tsconfig.json --require ./tests/setup.ts ./tests/ut/**/*.test.ts",
     "test:watch": "ts-mocha -n loader=ts-node/esm -p ./tsconfig.json --require ./tests/setup.ts --watch --parallel --slow 100 ./tests/ut/**/*.test.ts",
-    "test:types": "tstyche ./tests"
+    "test:types": "tstyche"
   },
   "files": [
     "dist/**/*.js",
@@ -45,7 +45,7 @@
     "sinon-chai": "^4.0.1",
     "ts-mocha": "^11.1.0",
     "ts-node": "^10.9.2",
-    "tstyche": "^4.3.0",
+    "tstyche": "^5.0.0-beta.2",
     "typescript": "^5.5.4",
     "web-worker": "^1.5.0"
   },
