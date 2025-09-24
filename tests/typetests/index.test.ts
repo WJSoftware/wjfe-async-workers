@@ -1,5 +1,5 @@
 import { describe, expect, test } from "tstyche";
-import type { Token, WorkerTasks, AsyncMessage, QueueingOptions } from "../../src/workers.js";
+import type { Token, WorkerTasks, AsyncMessage, QueueingOptions } from "../../src/types.js";
 import { CancellationSource } from "../../src/cancellation/CancellationSource.js";
 import { TaskCancelledError } from "../../src/cancellation/TaskCancelledError.js";
 import { Queue } from "../../src/misc/Queue.js";

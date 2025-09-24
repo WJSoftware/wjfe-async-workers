@@ -1,5 +1,5 @@
 import { CancelledMessage } from "../cancellation/CancelledMessage.js";
-import type { AsyncMessageUntyped, AsyncResponse, DisconnectFn, IWorker, ProcessMessageFn, RejectFn, TaskCancelledMessage } from "../workers.js";
+import type { AsyncMessageUntyped, AsyncResponse, DisconnectFn, IWorker, ProcessMessageFn, RejectFn, TaskCancelledMessage } from "../types.js";
 import { WorkerTerminatedMessage } from "./WorkerTerminatedMessage.js";
 
 function isTaskCancelledMessage(message: any): message is TaskCancelledMessage {

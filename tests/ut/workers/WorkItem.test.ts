@@ -6,7 +6,7 @@ import { WorkItemInternal } from '../../../src/workers/WorkItemInternal.js';
 import { WorkItemStatus } from '../../../src/workers/AsyncWorker.js';
 import { CancelledMessage } from '../../../src/cancellation/CancelledMessage.js';
 import { CancellationSource } from '../../../src/cancellation/CancellationSource.js';
-import { WorkItemData, IWorker } from '../../../src/workers.js';
+import type { WorkItemData, IWorker } from '../../../src/types.js';
 
 describe('WorkItem', () => {
     let workItem: WorkItem<string>;

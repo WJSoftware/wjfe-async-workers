@@ -1,4 +1,4 @@
-import type { Token } from "../workers.d.ts";
+import type { Token } from "../types.js";
 import { mutexIdentityData } from "./identifiers.js";
 import { acquire, acquireAsync, SemaphoreInternal, type Releaser } from "./Semaphore.js";
 

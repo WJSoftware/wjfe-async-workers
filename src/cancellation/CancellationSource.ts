@@ -1,7 +1,7 @@
 import { Event } from "../sync/Event.js";
 import { cancellationSourceIdentityData } from "../sync/identifiers.js";
 import { isSignaled } from "../sync/ManualResetEvent.js";
-import type { Token } from "../workers.js";
+import type { Token } from "../types.js";
 import { TaskCancelledError } from "./TaskCancelledError.js";
 
 /**

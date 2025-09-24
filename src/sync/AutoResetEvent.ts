@@ -1,4 +1,4 @@
-import type { Token } from "../workers.js";
+import type { Token } from "../types.js";
 import { Event } from "./Event.js";
 import { autoResetEventIdentityData, checkToken } from "./identifiers.js";
 
