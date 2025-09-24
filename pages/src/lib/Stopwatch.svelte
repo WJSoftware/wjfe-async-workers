@@ -13,7 +13,7 @@
     
     let elapsed = $state(0);
     let startTime: Date;
-    let timer = 0;
+    let timer: NodeJS.Timeout;
 
     let hh = $derived(Math.floor(elapsed / 3600));
     let mm = $derived(Math.floor((elapsed - hh * 3600) / 60));

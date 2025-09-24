@@ -12,19 +12,19 @@
 		"lint": "eslint ."
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-auto": "^3.0.0",
+		"@sveltejs/adapter-auto": "^6.1.0",
 		"@sveltejs/kit": "^2.0.0",
-		"@sveltejs/vite-plugin-svelte": "^4.0.0-next.6",
+		"@sveltejs/vite-plugin-svelte": "^6.2.0",
 		"@types/eslint": "^9.6.0",
 		"eslint": "^9.0.0",
-		"eslint-plugin-svelte": "^2.36.0",
+		"eslint-plugin-svelte": "^3.12.4",
 		"gh-pages": "^6.1.1",
-		"globals": "^15.0.0",
+		"globals": "^16.4.0",
 		"svelte": "^5.0.0-next.1",
-		"svelte-check": "^3.6.0",
+		"svelte-check": "^4.3.2",
 		"typescript": "^5.0.0",
 		"typescript-eslint": "^8.0.0",
-		"vite": "^5.4.7"
+		"vite": "^7.1.7"
 	},
 	"type": "module",
 	"dependencies": {
