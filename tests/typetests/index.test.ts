@@ -1,9 +1,10 @@
 import { describe, expect, test } from "tstyche";
-import type { Token, WorkerTasks, AsyncMessage } from "../../src/workers.js";
+import type { Token, WorkerTasks, AsyncMessage, QueueingOptions } from "../../src/workers.js";
 import { CancellationSource } from "../../src/cancellation/CancellationSource.js";
 import { TaskCancelledError } from "../../src/cancellation/TaskCancelledError.js";
 import { Queue } from "../../src/misc/Queue.js";
-import { AsyncWorker, type Enqueue, type EnqueueFn } from "../../src/workers/AsyncWorker.js";
+import type { Enqueue, EnqueueFn } from "../../src/workers/AsyncWorker.js";
+import { WorkItem } from "../../src/workers/WorkItem.js";
 
 describe("Type Tests", () => {
     test("Token should be Int32Array", () => {
@@ -84,5 +85,28 @@ describe("Type Tests", () => {
         expect(stringQueue.enqueue).type.not.toBeCallableWith(42);
         expect(stringQueue.enqueue).type.not.toBeCallableWith(true);
         expect(stringQueue.enqueue).type.not.toBeCallableWith({});
+    });
+});
+
+describe('Enqueue, EnqueueFn', () => {
+    type TestTasks = {
+        add: (args: { a: number; b: number }) => number;
+        greet: (args: { name: string }) => string;
+        noArgs: () => void;
+    };
+    test("EnqueueFn should generate correct task functions.", () => {
+        expect<EnqueueFn<TestTasks['add']>>().type.toBeCallableWith({ a: 1, b: 2 });
+        expect<EnqueueFn<TestTasks['add']>>().type.toBeCallableWith({ a: 1, b: 2 }, { cancellable: true });
+        expect<EnqueueFn<TestTasks['greet']>>().type.toBeCallableWith({ name: "Alice" });
+        expect<EnqueueFn<TestTasks['greet']>>().type.toBeCallableWith({ name: "Alice" }, { cancellable: true });
+        expect<EnqueueFn<TestTasks['noArgs']>>().type.toBeCallableWith();
+        expect<EnqueueFn<TestTasks['noArgs']>>().type.toBeCallableWith(undefined, { cancellable: true });
+    });
+    test("Enqueue should map task names to EnqueueFn correctly.", () => {
+        expect<Enqueue<TestTasks>>().type.toBe<{
+            add: (payload: { a: number; b: number }, options?: QueueingOptions) => WorkItem<number>;
+            greet: (payload: { name: string }, options?: QueueingOptions) => WorkItem<string>;
+            noArgs: (payload: void, options?: QueueingOptions) => WorkItem<void>;
+        }>();
     });
 });
