@@ -6,6 +6,23 @@ import { InternalWorker } from "./InternalWorker.js";
 import { WorkItem } from "./WorkItem.js";
 import { WorkItemInternal } from "./WorkItemInternal.js";
 
+/**
+ * Determines if a worker-like object is a SharedWorker using duck typing.
+ * @param worker The worker object to test
+ * @returns true if the worker appears to be a SharedWorker, false otherwise
+ */
+function isSharedWorker(worker: any): worker is SharedWorker {
+    // SharedWorker has a 'port' property (MessagePort) with the required methods
+    return worker && 
+           typeof worker === 'object' &&
+           'port' in worker && 
+           worker.port && 
+           typeof worker.port === 'object' &&
+           typeof worker.port.postMessage === 'function' && 
+           typeof worker.port.addEventListener === 'function' &&
+           typeof worker.port.removeEventListener === 'function';
+}
+
 export type EnqueueFn<Fn extends ((...args: any[]) => any) = (() => any)> =
     (payload: Fn extends () => any ? void : Parameters<Fn>[0], options?: QueueingOptions) => WorkItem<ReturnType<Fn>>;
 
@@ -55,7 +72,7 @@ export class AsyncWorker<Tasks extends Record<string, (...args: any[]) => any>> 
     #taskRunning;
     #enqueue;
     constructor(worker: Worker | SharedWorker, tasks: Tasks) {
-        this.#iWorker = Object.getPrototypeOf(worker).name === 'Worker' ? new InternalWorker(worker as Worker) : new InternalSharedWorker(worker as SharedWorker);
+        this.#iWorker = isSharedWorker(worker) ? new InternalSharedWorker(worker) : new InternalWorker(worker as Worker);
         this.#queue = new Queue<WorkItemInternal>();
         this.#taskRunning = false;
         this.#enqueue = Object.keys(tasks).reduce((prev, curr) => {
