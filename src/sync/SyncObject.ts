@@ -1,4 +1,4 @@
-import type { Token } from "../workers.d.ts";
+import type { Token } from "../types.js";
 
 /**
  * Base class for synchronization objects.

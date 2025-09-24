@@ -1,6 +1,6 @@
 import { sinon } from "../../setup.js";
 import Worker from 'web-worker';
-import type { Token } from "../../../src/workers.js";
+import type { Token } from "../../../src/types.js";
 import { SyncObject } from "../../../src/sync/SyncObject.js";
 
 export type StubbedAtomics = {

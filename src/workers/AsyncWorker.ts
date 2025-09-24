@@ -1,6 +1,6 @@
 import { Queue } from "../misc/Queue.js";
 import { nextWorkItemId } from "../misc/nextWorkItemId.js";
-import type { IWorker, QueueingOptions, RejectFn, WorkerTasks, WorkItemData } from "../workers.js";
+import type { IWorker, QueueingOptions, RejectFn, WorkerTasks, WorkItemData } from "../types.js";
 import { InternalSharedWorker } from "./InternalSharedWorker.js";
 import { InternalWorker } from "./InternalWorker.js";
 import { WorkItem } from "./WorkItem.js";

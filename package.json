@@ -5,7 +5,7 @@
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
   "scripts": {
-    "build": "pwsh -Command \"npx tsc && copy src/workers.d.ts dist/\"",
+    "build": "npx tsc",
     "postbuild": "publint",
     "deploy-pages": "cd ./pages && npm run deploy-pages",
     "test": "npm run test:unit && npm run test:types",

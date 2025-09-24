@@ -1,6 +1,6 @@
 import { CancellationSource } from "../cancellation/CancellationSource.js";
 import { CancelledMessage } from "../cancellation/CancelledMessage.js";
-import type { AsyncMessageUntyped, DisconnectFn, IWorker, QueueingOptions, WorkItemData } from "../workers.js";
+import type { AsyncMessageUntyped, DisconnectFn, IWorker, QueueingOptions, WorkItemData } from "../types.js";
 import { WorkItemStatus, type WorkItemStatusEnum } from "./AsyncWorker.js";
 import { WorkerTerminatedMessage } from "./WorkerTerminatedMessage.js";
 

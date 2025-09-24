@@ -1,5 +1,5 @@
 import { TaskCancelledError } from "../cancellation/TaskCancelledError.js";
-import type { AsyncMessageUntyped, AsyncResponse } from "../workers.d.ts";
+import type { AsyncMessageUntyped, AsyncResponse } from "../types.js";
 
 /**
  * Defines the function provided to worker tasks so workers can communicate back to the calling thread.

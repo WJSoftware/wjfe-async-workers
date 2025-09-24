@@ -12,3 +12,4 @@ export * from './workers/AsyncWorker.js';
 export * from "./workers/workerListener.js";
 export * from './workers/WorkerTerminatedMessage.js';
 export * from "./workers/WorkItem.js";
+export type * from "./types.js";

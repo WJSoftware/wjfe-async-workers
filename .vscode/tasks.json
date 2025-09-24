@@ -10,7 +10,7 @@
 			},
 			"problemMatcher": [],
 			"label": "npm: build",
-			"detail": "pwsh -Command \"npx tsc && copy src/workers.d.ts dist/\""
+			"detail": "Build package"
 		}
 	]
 }

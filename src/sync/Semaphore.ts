@@ -1,4 +1,4 @@
-import type { Token } from "../workers.js";
+import type { Token } from "../types.js";
 import { checkToken, semaphoreIdentityData, type IdentifierData } from "./identifiers.js";
 import { SyncObject } from "./SyncObject.js";
 
