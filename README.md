@@ -4,8 +4,9 @@
 
 [Live Demo](https://wjsoftware.github.io/wjfe-async-workers)
 
-> **⚠️ Caution!**
-> This NPM package has had minimal testing under NodeJS + web-worker.
+> **⚠️ Important**
+> 
+> This package may not yet be production-ready.  It does work in the browser and in NodeJS using a polyfill like the `web-worker` NPM package.  Unit testing coverage currently covers synchronization objects, but not the asynchronous features.  It is getting there, though.
 
 ## Objectives
 
@@ -20,7 +21,7 @@ These are the recommended steps to get things going:
 to incoming messages.
 2. Export the tasks worker object.
 3. Create a new instance of `Worker` the way is recommended by your bundler, usually with the syntax 
-`new Worker("./myworker.js", impot.meta.url)`.  However, this forces you to write the worker in JavaScript, at least 
+`new Worker("./my-worker.js", import.meta.url)`.  However, this forces you to write the worker in JavaScript, at least 
 in Vite-powered projects.
 4. Create a new instance of `AsyncWorker` (from this package) by passing the worker object and the tasks object from 
 the previous points.
@@ -81,6 +82,7 @@ This is a 3-step worker.  The worker simply waits to be informed which step to r
 This is what needs to be done in order to obtain an object that commands the worker:
 
 > **⚡ Important**
+> 
 > This example is using TypeScript and the following assumes a Vite-powered project.  We are deviating from the 
 > recommended way of obtaining a worker because the recommended way requires the worker to be written in JavaScript 
 > while in serve mode (`npm run dev`).
@@ -144,17 +146,18 @@ self.onconnect = (ev) => {
 ## Bi-Directional Communication
 
 > **🕓 TL;DR**
+> 
 > It's OK for workers to transmit intermediate results like progress reports and partial results.  It is not recommended for the main thread to have to send data to a paused task.  Promises in work item objects resolve once the `QueueingOptions.processMessage()` function returns `true`.
 
 The default functionality is fine for many cases:  A worker task is started, the user interface waits for its 
 completion and when the task finishes, the work item's `promise` property spits out the resultant object when awaited.
 
-There are also many cases where "interim" communcation between the worker and the UI thread is desired, most commonly:
+There are also many cases where "interim" communication between the worker and the UI thread is desired, most commonly:
 
 1. Progress reports
 2. Partial results
 
-How can a worker send data while the task is still in progress?  By using the provied `post()` function.
+How can a worker send data while the task is still in progress?  By using the provided `post()` function.
 
 In reality, the functions of the worker's tasks object in the quickstart are simplified.  In reality we can re-write 
 the tasks object like this:
@@ -282,9 +285,10 @@ To learn about the implementation in the worker side, keep reading.
 
 This package provides synchronization objects that use `Atomics` to cross the thread boundary safely.
 
-> [!IMPORTANT]
+> **⚡ Important**
+> 
 > This implementation uses `Atomics` on `SharedArrayBuffer` objects which demands certain 
-[security requirements](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer#security_requirements).
+[security requirements](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer#security_requirements) in browser environments.
 
 ### CancellationSource
 
@@ -299,7 +303,7 @@ import { CancellationSource, type Token } from '@wjfe/async-workers';
 
 function computeSomeStuff(cancelToken?: Token) {
     for (let i = 0; i < Number.MAX_SAFE_INTEGER; ++i) {
-        // No thowing will be done if cancelToken is undefined.
+        // No throwing will be done if cancelToken is undefined.
         CancellationSource.throwIfSignaled(cancelToken);
         ...
     }
@@ -409,17 +413,19 @@ Generally speaking, terminated workers should be disposed.  Do so as fast as pos
 
 ## Usage in Node.Js
 
-This package, by design, is for use in the browser.  However, there is this NPM package called [web-worker](https://www.npmjs.com/package/web-worker)
-that claims to bring the browser API into Node.  If this is indeed the case, using these 2 packages together should 
-work properly in Node.
+> Since **v0.2.3**
+
+This package, by design, is for use in the browser.  However, there is this NPM package called [web-worker](https://www.npmjs.com/package/web-worker) that brings the browser API into Node.  This collaboration works OK and enables the use of `@wjfe/async-workers` in Node.
+
+Generally speaking, `AsyncWorker`, upon construction will duck-type test the provided worker.  If it looks like a shared worker, it will initialize as a controller for a shared worker; otherwise, it will initialize as a controller for a dedicated worker.  This should enable any `Worker` polyfill, not just `web-worker`.
 
 ## Roadmap
 
 | Synchronization Objects | Dedicated Worker | Shared Worker |
 | - | - | - |
-| [x] ManualResetEvent | [x] Simple request/response scenario | [x] Simple request/response scenario |
-| [x] AutoResetEvent | [x] Request/multiple response scenario | [x] Request/multiple response scenario |
-| [x] Semaphore | [x] Strongly-typed tasks | [x] Strongly-typed tasks |
-| [x] CancellationSource | [x] Worker termination |  |
-| [x] Mutex | [x] Out-of-order work items | [x] Out-of-order work items |
-| | [x] Task cancellation | [x] Task cancellation|
+| ✅ ManualResetEvent | ✅ Simple request/response scenario | ✅ Simple request/response scenario |
+| ✅ AutoResetEvent | ✅ Request/multiple response scenario | ✅ Request/multiple response scenario |
+| ✅ Semaphore | ✅ Strongly-typed tasks | ✅ Strongly-typed tasks |
+| ✅ CancellationSource | ✅ Worker termination |  |
+| ✅ Mutex | ✅ Out-of-order work items | ✅ Out-of-order work items |
+| | ✅ Task cancellation | ✅ Task cancellation|
