@@ -3,7 +3,7 @@
     import Instructions from "$lib/Instructions.svelte";
     import Primes from "$lib/Primes.svelte";
     import TopBanner from "$lib/TopBanner.svelte";
-    import { AsyncWorker } from "../../../dist/workers/AsyncWorker.js";
+    import { AsyncWorker } from "@wjfe/async-workers";
     import svelteLogo from "../assets/svelte.svg";
     import { exampleWorker } from "../workers/exampleWorker.js";
     import urlWorker from '../workers/exampleWorker.js?worker';

@@ -1,4 +1,4 @@
-import { CancellationSource, ManualResetEvent, workerListener, type PostFn, type Token } from "../../../dist/index.js";
+import { CancellationSource, ManualResetEvent, workerListener, type PostFn, type Token } from "@wjfe/async-workers";
 
 function isPrime(n: number, cancelToken?: Token) {
     // Made unecessarily inefficient for demo purposes.

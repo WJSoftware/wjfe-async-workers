@@ -1,7 +1,7 @@
 <div class="banner px-5 py-3 text-bg-primary fs-5">
     <p>
-        Cast your vote @ <a href="https://devhunt.org/tool/wjfeasync-workers" target="_blank">devhunt.org</a> on 
-        <strong>March the 4<sup>th</sup>, 2025.</strong>
+        Works in NodeJS using a <strong>Worker</strong> polyfill like the 
+        <a href="https://www.npmjs.com/package/web-worker" target="_blank" rel="noreferrer">web-worker</a> package!
     </p>
 </div>
 

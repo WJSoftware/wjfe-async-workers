@@ -1,6 +1,6 @@
 <script lang="ts">
     import { untrack } from "svelte";
-    import { CancelledMessage, ManualResetEvent, WorkItemStatus, type AsyncWorker, type WorkItem } from "../../../dist/index.js";
+    import { CancelledMessage, ManualResetEvent, WorkItemStatus, type AsyncWorker, type WorkItem } from "@wjfe/async-workers";
     import { type ExampleWorker } from "../workers/exampleWorker.js";
     import { nextControlId } from "./nextControlId.js";
     import Stopwatch from "./Stopwatch.svelte";
@@ -169,7 +169,7 @@
                 type="button"
                 class="btn btn-warning"
                 onclick={cancelCalculation}
-                disabled={!running}
+                disabled={!running || paused}
             >
                 Cancel process
             </button>
