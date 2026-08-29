@@ -32,7 +32,7 @@ export class AutoResetEvent extends Event {
      * @returns `'ok'` when the waiting is over because the token signaled while waiting on it, `'timed-out'` when the 
      * specified timeout elapsed and the token did not signal, or `'not-equal'` if no wait took place.
      */
-    static wait(token: Token, timeout?: number) {
+    static waitSync(token: Token, timeout?: number) {
         checkToken(token, ...autoResetEventIdentityData);
         // Performance optimization:  Blind attempt.
         if (Atomics.compareExchange(token, 0, 1, 0) === 1) {
@@ -57,7 +57,7 @@ export class AutoResetEvent extends Event {
      * @returns `'ok'` when the waiting is over because the token signaled while waiting on it, `'timed-out'` when the 
      * specified timeout elapsed and the token did not signal, or `'not-equal'` if no wait took place.
      */
-    static async waitAsync(token: Token, timeout?: number) {
+    static async wait(token: Token, timeout?: number) {
         checkToken(token, ...autoResetEventIdentityData);
         // Performance optimization:  Blind attempt.
         if (Atomics.compareExchange(token, 0, 1, 0) === 1) {

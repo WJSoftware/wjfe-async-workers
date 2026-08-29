@@ -45,19 +45,19 @@ describe('Mutex', () => {
         });
     });
 
-    describe('static acquire', () => {
+    describe('static acquireSync', () => {
         beforeEach(() => {
             mutex = new Mutex();
         });
 
         it('Should acquire immediately when mutex is available.', () => {
-            const releaser = Mutex.acquire(mutex.token);
+            const releaser = Mutex.acquireSync(mutex.token);
 
             expect(typeof releaser).toBe('function');
         });
 
         it('Should wait when mutex is not available.', async () => {
-            const releaser = Mutex.acquire(mutex.token);
+            const releaser = Mutex.acquireSync(mutex.token);
             const waitAcquire = (await testMutexAcquireInWorker(mutex.token)).wait;
             let mainThreadReleased = false;
             setTimeout(() => {
@@ -71,25 +71,25 @@ describe('Mutex', () => {
         });
     });
 
-    describe('static acquireAsync', () => {
+    describe('static acquire', () => {
         beforeEach(() => {
             mutex = new Mutex();
         });
 
         it('Should acquire immediately when mutex is available.', async () => {
-            const releaser = await Mutex.acquireAsync(mutex.token);
+            const releaser = await Mutex.acquire(mutex.token);
 
             expect(typeof releaser).toBe('function');
         });
 
         it('Should wait asynchronously when mutex is not available.', async () => {
-            const releaser = Mutex.acquire(mutex.token);
+            const releaser = Mutex.acquireSync(mutex.token);
             let mainThreadReleased = false;
             setTimeout(() => {
                 mainThreadReleased = true;
                 releaser();
             }, 0);
-            await Mutex.acquireAsync(mutex.token);
+            await Mutex.acquire(mutex.token);
 
             expect(mainThreadReleased).toBe(true);
         });
@@ -101,7 +101,7 @@ describe('Mutex', () => {
         });
 
         it('Should release the mutex when called.', () => {
-            const releaser = Mutex.acquire(mutex.token);
+            const releaser = Mutex.acquireSync(mutex.token);
 
             expect(typeof releaser).toBe('function');
 
@@ -111,7 +111,7 @@ describe('Mutex', () => {
         });
 
         it('Should throw error when called twice.', () => {
-            const releaser = Mutex.acquire(mutex.token);
+            const releaser = Mutex.acquireSync(mutex.token);
 
             releaser(); // First release
 
@@ -125,22 +125,22 @@ describe('Mutex', () => {
         });
 
         it('Should ensure the mutex cannot be acquired again asynchronously.', async () => {
-            const releaser1 = Mutex.acquire(mutex.token);
+            const releaser1 = Mutex.acquireSync(mutex.token);
             expect(typeof releaser1).toBe('function');
-            let releaser2 = await Mutex.acquireAsync(mutex.token, 0);
+            let releaser2 = await Mutex.acquire(mutex.token, 0);
             expect(releaser2).toBe('timed-out');
             let mainThreadReleased = false;
             setTimeout(() => {
                 mainThreadReleased = true;
                 releaser1();
             }, 0);
-            releaser2 = await Mutex.acquireAsync(mutex.token);
+            releaser2 = await Mutex.acquire(mutex.token);
             expect(mainThreadReleased).toBe(true);
             expect(typeof releaser2).toBe('function');
         });
 
         it("Should ensure the mutex cannot be acquired from a different thread while it's held.", async () => {
-            const releaser1 = Mutex.acquire(mutex.token);
+            const releaser1 = Mutex.acquireSync(mutex.token);
             expect(typeof releaser1).toBe('function');
             const waitAcquire = (await testMutexAcquireInWorker(mutex.token, 0)).wait;
             const result = await waitAcquire;

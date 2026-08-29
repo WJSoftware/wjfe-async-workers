@@ -60,18 +60,18 @@ describe('ManualResetEvent', () => {
         tokenTypeTest(AutoResetEvent, ManualResetEvent.isSignaled, ManualResetEvent);
     });
 
-    describe('static wait', () => {
-        tokenTypeTest(AutoResetEvent, ManualResetEvent.wait, ManualResetEvent);
+    describe('static waitSync', () => {
+        tokenTypeTest(AutoResetEvent, ManualResetEvent.waitSync, ManualResetEvent);
 
         it('Should handle timeout.', () => {
-            const result = ManualResetEvent.wait(eventObj.token, 10);
+            const result = ManualResetEvent.waitSync(eventObj.token, 10);
             
             expect(result).toBe('timed-out');
         });
 
         it('Should handle immediate success when already signaled.', () => {
             eventObj.signal();
-            const result = ManualResetEvent.wait(eventObj.token);
+            const result = ManualResetEvent.waitSync(eventObj.token);
             expect(result).toBe('not-equal');
         });
 
@@ -94,30 +94,30 @@ describe('ManualResetEvent', () => {
         });
     });
 
-    describe('static waitAsync', () => {
-        tokenTypeTest(AutoResetEvent, ManualResetEvent.waitAsync, ManualResetEvent);
+    describe('static wait', () => {
+        tokenTypeTest(AutoResetEvent, ManualResetEvent.wait, ManualResetEvent);
         it('Should handle async wait result.', async () => {
             // Signal the event after a short delay to test async wait
             setTimeout(() => {
                 eventObj.signal();
             }, 0);
             
-            const result = await ManualResetEvent.waitAsync(eventObj.token, 10);
+            const result = await ManualResetEvent.wait(eventObj.token, 10);
             
             expect(result).toBe('ok');
         });
 
         it('Should handle sync wait result.', async () => {
-            // Pre-signal the event so waitAsync returns immediately
+            // Pre-signal the event so wait returns immediately
             eventObj.signal();
             
-            const result = await ManualResetEvent.waitAsync(eventObj.token);
+            const result = await ManualResetEvent.wait(eventObj.token);
             
             expect(result).toBe('not-equal');
         });
 
         it('Should handle timeout in async wait.', async () => {
-            const result = await ManualResetEvent.waitAsync(eventObj.token, 10);
+            const result = await ManualResetEvent.wait(eventObj.token, 10);
             
             expect(result).toBe('timed-out');
         });

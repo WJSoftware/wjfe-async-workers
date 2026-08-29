@@ -60,22 +60,22 @@ describe('AutoResetEvent', () => {
         });
     });
 
-    describe('static wait', () => {
+    describe('static waitSync', () => {
         it('Should throw when the given token is not the token of an AutoResetEvent object.', () => {
             const foreignEvent = new ManualResetEvent();
 
-            expect(() => AutoResetEvent.wait(foreignEvent.token)).toThrow();
+            expect(() => AutoResetEvent.waitSync(foreignEvent.token)).toThrow();
         });
 
         it('Should handle timeout.', () => {
-            const result = AutoResetEvent.wait(eventObj.token, 10);
+            const result = AutoResetEvent.waitSync(eventObj.token, 10);
             
             expect(result).toBe('timed-out');
         });
 
         it('Should handle immediate success when already signaled.', () => {
             eventObj.signal();
-            const result = AutoResetEvent.wait(eventObj.token);
+            const result = AutoResetEvent.waitSync(eventObj.token);
             
             expect(result).toBe('not-equal');
             // Verify the event auto-reset (signal was consumed)
@@ -102,11 +102,11 @@ describe('AutoResetEvent', () => {
         });
     });
 
-    describe('static waitAsync', () => {
-        it('Should throw when the given token is not the token of an AutoResetEvent object.', () => {
+    describe('static wait', () => {
+        it('Should throw when the given token is not the token of an AutoResetEvent object.', async () => {
             const foreignEvent = new ManualResetEvent();
 
-            expect(() => AutoResetEvent.wait(foreignEvent.token)).toThrow();
+            await expect(AutoResetEvent.wait(foreignEvent.token)).rejects.toThrow();
         });
         it('Should handle async wait result.', async () => {
             // Signal the event after a short delay to test async wait
@@ -114,17 +114,17 @@ describe('AutoResetEvent', () => {
                 eventObj.signal();
             }, 0);
             
-            const result = await AutoResetEvent.waitAsync(eventObj.token, 1000);
+            const result = await AutoResetEvent.wait(eventObj.token, 1000);
             
             expect(result).toBe('ok');
             expect(Atomics.load(eventObj.token, 0)).toBe(0);
         });
 
         it('Should handle sync wait result.', async () => {
-            // Pre-signal the event so waitAsync returns immediately
+            // Pre-signal the event so wait returns immediately
             eventObj.signal();
             
-            const result = await AutoResetEvent.waitAsync(eventObj.token);
+            const result = await AutoResetEvent.wait(eventObj.token);
             
             expect(result).toBe('not-equal');
             // Verify the event auto-reset (signal was consumed)
@@ -132,7 +132,7 @@ describe('AutoResetEvent', () => {
         });
 
         it('Should handle timeout in async wait.', async () => {
-            const result = await AutoResetEvent.waitAsync(eventObj.token, 10);
+            const result = await AutoResetEvent.wait(eventObj.token, 10);
             
             expect(result).toBe('timed-out');
         });
