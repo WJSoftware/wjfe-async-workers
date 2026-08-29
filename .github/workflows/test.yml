@@ -11,4 +11,4 @@ jobs:
       node-version: 24
       build-script: build
       test-script: test
-      build: false
+      build: true
