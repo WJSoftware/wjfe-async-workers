@@ -9,8 +9,8 @@
     "postbuild": "publint",
     "deploy-pages": "cd ./pages && npm run deploy-pages",
     "test": "npm run test:unit && npm run test:types",
-    "test:unit": "ts-mocha -n loader=ts-node/esm -p ./tsconfig.json --require ./tests/setup.ts ./tests/ut/**/*.test.ts",
-    "test:watch": "ts-mocha -n loader=ts-node/esm -p ./tsconfig.json --require ./tests/setup.ts --watch --parallel --slow 100 ./tests/ut/**/*.test.ts",
+    "test:unit": "vitest run",
+    "test:watch": "vitest --watch",
     "test:types": "tstyche"
   },
   "files": [
@@ -37,19 +37,11 @@
     "node": ">=18.0.0"
   },
   "devDependencies": {
-    "@types/chai": "^5.2.2",
-    "@types/mocha": "^10.0.10",
-    "@types/node": "^24.5.1",
-    "@types/sinon": "^17.0.4",
-    "@types/sinon-chai": "^4.0.0",
-    "chai": "^6.0.1",
+    "@types/node": "^26.4.0",
     "publint": "^0.3.12",
-    "sinon": "^21.0.0",
-    "sinon-chai": "^4.0.1",
-    "ts-mocha": "^11.1.0",
-    "ts-node": "^10.9.2",
-    "tstyche": "^5.0.0-beta.2",
-    "typescript": "^5.5.4",
+    "tstyche": "^7.2.3",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.11",
     "web-worker": "^1.5.0"
   },
   "type": "module"
