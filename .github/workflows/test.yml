@@ -8,7 +8,7 @@ jobs:
   test:
     uses: WJSoftware/cicd/.github/workflows/npm-test.yml@v0.4
     with:
-      node-version: 24
+      node-version: 26
       build-script: build
       test-script: test
       build: true
