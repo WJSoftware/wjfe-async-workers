@@ -20,7 +20,7 @@ permissions:
 
 jobs:
   publish:
-    uses: WJSoftware/cicd/.github/workflows/npm-publish.yml@v0.4
+    uses: WJSoftware/cicd/.github/workflows/npm-publish.yml@main
     with:
       node-version: 24
       build-script: build

@@ -6,7 +6,7 @@ on:
 
 jobs:
   test:
-    uses: WJSoftware/cicd/.github/workflows/npm-test.yml@v0.4
+    uses: WJSoftware/cicd/.github/workflows/npm-test.yml@main
     with:
       node-version: 26
       build-script: build
