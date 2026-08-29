@@ -1,6 +1,4 @@
-import { describe, it, beforeEach, after } from 'mocha';
-import { expect } from 'chai';
-import { sinon } from '../../setup.js';
+import { describe, it, beforeEach, expect, vi, afterAll } from 'vitest';
 import { AutoResetEvent } from '../../../src/sync/AutoResetEvent.js';
 import { autoResetEventIdentityData } from '../../../src/sync/identifiers.js';
 import { delay, testAutoResetEventWaitInWorker } from '../helpers/helpers.js';
@@ -10,28 +8,28 @@ describe('AutoResetEvent', () => {
     let eventObj: AutoResetEvent;
 
     beforeEach(() => {
-        sinon.reset();
+        vi.restoreAllMocks();
         eventObj = new AutoResetEvent();
     });
 
-    after(() => {
-        sinon.restore();
+    afterAll(() => {
+        vi.restoreAllMocks();
     });
 
     describe('constructor', () => {
         it('Should create an AutoResetEvent instance.', () => {
-            expect(eventObj).to.be.instanceOf(AutoResetEvent);
+            expect(eventObj).toBeInstanceOf(AutoResetEvent);
         });
 
         it('Should have a token property.', () => {
-            expect(eventObj.token).to.be.instanceOf(Int32Array);
+            expect(eventObj.token).toBeInstanceOf(Int32Array);
         });
 
         it('Should initialize token with correct identifier and state.', () => {
             // Check that the type identifier is set correctly
-            expect(Atomics.load(eventObj.token, 1)).to.equal(autoResetEventIdentityData[0]);
+            expect(Atomics.load(eventObj.token, 1)).toBe(autoResetEventIdentityData[0]);
             // Check that the initial state is 0 (not signaled)
-            expect(Atomics.load(eventObj.token, 0)).to.equal(0);
+            expect(Atomics.load(eventObj.token, 0)).toBe(0);
         });
     });
 
@@ -39,7 +37,7 @@ describe('AutoResetEvent', () => {
         it('Should store 1 in token position 0 when signaled.', () => {
             eventObj.signal();
             
-            expect(Atomics.load(eventObj.token, 0)).to.equal(1);
+            expect(Atomics.load(eventObj.token, 0)).toBe(1);
         });
     });
 
@@ -51,14 +49,14 @@ describe('AutoResetEvent', () => {
                 }
                 const result = AutoResetEvent.isSignaled(eventObj.token);
             
-                expect(result).to.equal(signal);
+                expect(result).toBe(signal);
             });
         });
 
         it('Should throw when the given token is not the token of an AutoResetEvent object.', () => {
             const foreignEvent = new ManualResetEvent();
 
-            expect(() => AutoResetEvent.isSignaled(foreignEvent.token)).to.throw();
+            expect(() => AutoResetEvent.isSignaled(foreignEvent.token)).toThrow();
         });
     });
 
@@ -66,22 +64,22 @@ describe('AutoResetEvent', () => {
         it('Should throw when the given token is not the token of an AutoResetEvent object.', () => {
             const foreignEvent = new ManualResetEvent();
 
-            expect(() => AutoResetEvent.wait(foreignEvent.token)).to.throw();
+            expect(() => AutoResetEvent.wait(foreignEvent.token)).toThrow();
         });
 
         it('Should handle timeout.', () => {
             const result = AutoResetEvent.wait(eventObj.token, 10);
             
-            expect(result).to.equal('timed-out');
+            expect(result).toBe('timed-out');
         });
 
         it('Should handle immediate success when already signaled.', () => {
             eventObj.signal();
             const result = AutoResetEvent.wait(eventObj.token);
             
-            expect(result).to.equal('not-equal');
+            expect(result).toBe('not-equal');
             // Verify the event auto-reset (signal was consumed)
-            expect(Atomics.load(eventObj.token, 0)).to.equal(0);
+            expect(Atomics.load(eventObj.token, 0)).toBe(0);
         });
 
         it('Should wait and succeed when signal becomes available.', async () => {
@@ -91,8 +89,8 @@ describe('AutoResetEvent', () => {
             eventObj.signal();
             
             const result = await waitComplete;
-            expect(result).to.equal('ok');
-            expect(Atomics.load(eventObj.token, 0)).to.equal(0);
+            expect(result).toBe('ok');
+            expect(Atomics.load(eventObj.token, 0)).toBe(0);
         });
 
         it('Should timeout when waiting and no signal occurs.', async () => {
@@ -100,7 +98,7 @@ describe('AutoResetEvent', () => {
 
             const result = await waitComplete;
 
-            expect(result).to.equal('timed-out');
+            expect(result).toBe('timed-out');
         });
     });
 
@@ -108,7 +106,7 @@ describe('AutoResetEvent', () => {
         it('Should throw when the given token is not the token of an AutoResetEvent object.', () => {
             const foreignEvent = new ManualResetEvent();
 
-            expect(() => AutoResetEvent.wait(foreignEvent.token)).to.throw();
+            expect(() => AutoResetEvent.wait(foreignEvent.token)).toThrow();
         });
         it('Should handle async wait result.', async () => {
             // Signal the event after a short delay to test async wait
@@ -118,8 +116,8 @@ describe('AutoResetEvent', () => {
             
             const result = await AutoResetEvent.waitAsync(eventObj.token, 1000);
             
-            expect(result).to.equal('ok');
-            expect(Atomics.load(eventObj.token, 0)).to.equal(0);
+            expect(result).toBe('ok');
+            expect(Atomics.load(eventObj.token, 0)).toBe(0);
         });
 
         it('Should handle sync wait result.', async () => {
@@ -128,15 +126,15 @@ describe('AutoResetEvent', () => {
             
             const result = await AutoResetEvent.waitAsync(eventObj.token);
             
-            expect(result).to.equal('not-equal');
+            expect(result).toBe('not-equal');
             // Verify the event auto-reset (signal was consumed)
-            expect(Atomics.load(eventObj.token, 0)).to.equal(0);
+            expect(Atomics.load(eventObj.token, 0)).toBe(0);
         });
 
         it('Should handle timeout in async wait.', async () => {
             const result = await AutoResetEvent.waitAsync(eventObj.token, 10);
             
-            expect(result).to.equal('timed-out');
+            expect(result).toBe('timed-out');
         });
     });
 });

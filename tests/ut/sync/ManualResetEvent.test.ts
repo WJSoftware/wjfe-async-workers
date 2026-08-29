@@ -1,6 +1,4 @@
-import { describe, it, beforeEach } from 'mocha';
-import { expect } from 'chai';
-import { sinon } from '../../setup.js';
+import { describe, it, beforeEach, afterAll, expect, vi } from 'vitest';
 import { ManualResetEvent } from '../../../src/sync/ManualResetEvent.js';
 import { delay, testManualResetEventWaitInWorker, tokenTypeTest } from '../helpers/helpers.js';
 import { manualResetEventIdentityData } from '../../../src/sync/identifiers.js';
@@ -10,25 +8,25 @@ describe('ManualResetEvent', () => {
     let eventObj: ManualResetEvent;
 
     beforeEach(() => {
-        sinon.reset();
+        vi.restoreAllMocks();
         eventObj = new ManualResetEvent();
     });
 
-    after(() => {
-        sinon.restore();
+    afterAll(() => {
+        vi.restoreAllMocks();
     });
 
     describe('constructor', () => {
         it('Should create a ManualResetEvent instance.', () => {
-            expect(eventObj).to.be.instanceOf(ManualResetEvent);
+            expect(eventObj).toBeInstanceOf(ManualResetEvent);
         });
 
         it('Should have a token property.', () => {
-            expect(eventObj.token).to.be.instanceOf(Int32Array);
+            expect(eventObj.token).toBeInstanceOf(Int32Array);
         });
         it('Should provide a non-signaled token.', () => {
-            expect(Atomics.load(eventObj.token, 1)).to.equal(manualResetEventIdentityData[0]);
-            expect(Atomics.load(eventObj.token, 0)).to.equal(0);
+            expect(Atomics.load(eventObj.token, 1)).toBe(manualResetEventIdentityData[0]);
+            expect(Atomics.load(eventObj.token, 0)).toBe(0);
         });
     });
 
@@ -36,7 +34,7 @@ describe('ManualResetEvent', () => {
         it('Should store 1 in token position 0 when signaled.', () => {
             eventObj.signal();
             
-            expect(Atomics.load(eventObj.token, 0)).to.equal(1);
+            expect(Atomics.load(eventObj.token, 0)).toBe(1);
         });
     });
 
@@ -44,7 +42,7 @@ describe('ManualResetEvent', () => {
         it('Should store 0 in token position 0 when reset.', () => {
             eventObj.reset();
 
-            expect(Atomics.load(eventObj.token, 0)).to.equal(0);
+            expect(Atomics.load(eventObj.token, 0)).toBe(0);
         });
     });
 
@@ -56,7 +54,7 @@ describe('ManualResetEvent', () => {
                 }
                 const result = ManualResetEvent.isSignaled(eventObj.token);
             
-                expect(result).to.equal(signal);
+                expect(result).toBe(signal);
             });
         });
         tokenTypeTest(AutoResetEvent, ManualResetEvent.isSignaled, ManualResetEvent);
@@ -68,13 +66,13 @@ describe('ManualResetEvent', () => {
         it('Should handle timeout.', () => {
             const result = ManualResetEvent.wait(eventObj.token, 10);
             
-            expect(result).to.equal('timed-out');
+            expect(result).toBe('timed-out');
         });
 
         it('Should handle immediate success when already signaled.', () => {
             eventObj.signal();
             const result = ManualResetEvent.wait(eventObj.token);
-            expect(result).to.equal('not-equal');
+            expect(result).toBe('not-equal');
         });
 
         it('Should wait and succeed when signal becomes available.', async () => {
@@ -84,7 +82,7 @@ describe('ManualResetEvent', () => {
             eventObj.signal();
 
             const result = await waitComplete;
-            expect(result).to.equal('ok');
+            expect(result).toBe('ok');
         });
 
         it('Should timeout when waiting and no signal occurs.', async () => {
@@ -92,7 +90,7 @@ describe('ManualResetEvent', () => {
 
             const result = await waitComplete;
 
-            expect(result).to.equal('timed-out');
+            expect(result).toBe('timed-out');
         });
     });
 
@@ -106,7 +104,7 @@ describe('ManualResetEvent', () => {
             
             const result = await ManualResetEvent.waitAsync(eventObj.token, 10);
             
-            expect(result).to.equal('ok');
+            expect(result).toBe('ok');
         });
 
         it('Should handle sync wait result.', async () => {
@@ -115,13 +113,13 @@ describe('ManualResetEvent', () => {
             
             const result = await ManualResetEvent.waitAsync(eventObj.token);
             
-            expect(result).to.equal('not-equal');
+            expect(result).toBe('not-equal');
         });
 
         it('Should handle timeout in async wait.', async () => {
             const result = await ManualResetEvent.waitAsync(eventObj.token, 10);
             
-            expect(result).to.equal('timed-out');
+            expect(result).toBe('timed-out');
         });
     });
 });

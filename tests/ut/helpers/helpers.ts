@@ -1,11 +1,7 @@
-import { sinon } from "../../setup.js";
-import Worker from 'web-worker';
+import Worker from "web-worker";
 import type { Token } from "../../../src/types.js";
 import { SyncObject } from "../../../src/sync/SyncObject.js";
-
-export type StubbedAtomics = {
-    [K in keyof Omit<Atomics, symbol>]: sinon.SinonStub;
-}
+import { expect, vi } from "vitest";
 
 /**
  * Creates a worker to test blocking Atomics.wait operations.
@@ -13,13 +9,19 @@ export type StubbedAtomics = {
  */
 export function createWorkerForWaitTesting(
     sharedBuffer: Token,
-    waitFunction: 'ManualResetEvent.wait' | 'AutoResetEvent.wait',
-    timeout?: number
+    waitFunction: "ManualResetEvent.wait" | "AutoResetEvent.wait",
+    timeout?: number,
 ) {
-    const { promise, resolve, reject } = createPromise<{ wait: Promise<'ok' | 'timed-out' | 'not-equal'> }>();
-    const { promise: waitPromise, resolve: waitResolve, reject: waitReject } = createPromise<'ok' | 'timed-out' | 'not-equal'>();
-    const workerURL = new URL('./test-wait-worker.ts', import.meta.url);
-    const worker = new Worker(workerURL, { type: 'module' });
+    const { promise, resolve, reject } = createPromise<{
+        wait: Promise<"ok" | "timed-out" | "not-equal">;
+    }>();
+    const {
+        promise: waitPromise,
+        resolve: waitResolve,
+        reject: waitReject,
+    } = createPromise<"ok" | "timed-out" | "not-equal">();
+    const workerURL = new URL("./test-wait-worker.ts", import.meta.url);
+    const worker = new Worker(workerURL, { type: "module" });
 
     const cleanup = () => {
         try {
@@ -30,7 +32,7 @@ export function createWorkerForWaitTesting(
     };
 
     worker.onmessage = (event) => {
-        if (event.data === 'running') {
+        if (event.data === "running") {
             resolve({ wait: waitPromise });
             return;
         }
@@ -58,30 +60,33 @@ export function createWorkerForWaitTesting(
  */
 export function testManualResetEventWaitInWorker(
     token: Token,
-    timeout?: number
+    timeout?: number,
 ) {
-    return createWorkerForWaitTesting(token, 'ManualResetEvent.wait', timeout);
+    return createWorkerForWaitTesting(token, "ManualResetEvent.wait", timeout);
 }
 
 /**
  * Helper to test AutoResetEvent.wait in a worker thread
  */
-export function testAutoResetEventWaitInWorker(
-    token: Token,
-    timeout?: number
-) {
-    return createWorkerForWaitTesting(token, 'AutoResetEvent.wait', timeout);
+export function testAutoResetEventWaitInWorker(token: Token, timeout?: number) {
+    return createWorkerForWaitTesting(token, "AutoResetEvent.wait", timeout);
 }
 
 export function createWorkerForAcquireTesting(
-    source: 'Mutex' | 'Semaphore',
+    source: "Mutex" | "Semaphore",
     token: Token,
-    timeout?: number
+    timeout?: number,
 ) {
-    const { promise, resolve, reject } = createPromise<{ wait: Promise<{ success: boolean; }>}>();
-    const { promise: waitPromise, resolve: waitResolve, reject: waitReject } = createPromise<{ success: boolean; }>();
-    const workerURL = new URL('./test-acquire-worker.ts', import.meta.url);
-    const worker = new Worker(workerURL, { type: 'module' });
+    const { promise, resolve, reject } = createPromise<{
+        wait: Promise<{ success: boolean }>;
+    }>();
+    const {
+        promise: waitPromise,
+        resolve: waitResolve,
+        reject: waitReject,
+    } = createPromise<{ success: boolean }>();
+    const workerURL = new URL("./test-acquire-worker.ts", import.meta.url);
+    const worker = new Worker(workerURL, { type: "module" });
 
     const cleanup = () => {
         try {
@@ -92,7 +97,7 @@ export function createWorkerForAcquireTesting(
     };
 
     worker.onmessage = (event) => {
-        if (event.data === 'running') {
+        if (event.data === "running") {
             resolve({ wait: waitPromise });
             return;
         }
@@ -114,59 +119,16 @@ export function createWorkerForAcquireTesting(
     return promise;
 }
 
-export function testMutexAcquireInWorker(
-    token: Token,
-    timeout?: number
-) {
-    return createWorkerForAcquireTesting('Mutex', token, timeout);
+export function testMutexAcquireInWorker(token: Token, timeout?: number) {
+    return createWorkerForAcquireTesting("Mutex", token, timeout);
 }
 
-export function testSemaphoreAcquireInWorker(
-    token: Token,
-    timeout?: number
-) {
-    return createWorkerForAcquireTesting('Semaphore', token, timeout);
-}
-
-export function createStubbedAtomics(): StubbedAtomics {
-    const mockAtomics = {
-        add: sinon.stub(Atomics, 'add'),
-        and: sinon.stub(Atomics, 'and'),
-        compareExchange: sinon.stub(Atomics, 'compareExchange'),
-        exchange: sinon.stub(Atomics, 'exchange'),
-        load: sinon.stub(Atomics, 'load'),
-        or: sinon.stub(Atomics, 'or'),
-        store: sinon.stub(Atomics, 'store'),
-        sub: sinon.stub(Atomics, 'sub'),
-        notify: sinon.stub(Atomics, 'notify'),
-        wait: sinon.stub(Atomics, 'wait'),
-        waitAsync: sinon.stub(Atomics, 'waitAsync'),
-        isLockFree: sinon.stub(Atomics, 'isLockFree'),
-        xor: sinon.stub(Atomics, 'xor'),
-    };
-    return mockAtomics;
-}
-
-export function createAtomicsSpy() {
-    return {
-        add: sinon.spy(Atomics, 'add'),
-        and: sinon.spy(Atomics, 'and'),
-        compareExchange: sinon.spy(Atomics, 'compareExchange'),
-        exchange: sinon.spy(Atomics, 'exchange'),
-        load: sinon.spy(Atomics, 'load'),
-        or: sinon.spy(Atomics, 'or'),
-        store: sinon.spy(Atomics, 'store'),
-        sub: sinon.spy(Atomics, 'sub'),
-        notify: sinon.spy(Atomics, 'notify'),
-        wait: sinon.spy(Atomics, 'wait'),
-        waitAsync: sinon.spy(Atomics, 'waitAsync'),
-        isLockFree: sinon.spy(Atomics, 'isLockFree'),
-        xor: sinon.spy(Atomics, 'xor'),
-    };
+export function testSemaphoreAcquireInWorker(token: Token, timeout?: number) {
+    return createWorkerForAcquireTesting("Semaphore", token, timeout);
 }
 
 export function delay(time: number = 0) {
-    return new Promise<void>(resolve => setTimeout(resolve, time));
+    return new Promise<void>((resolve) => setTimeout(resolve, time));
 }
 
 export function createPromise<T = void>() {
@@ -179,7 +141,11 @@ export function createPromise<T = void>() {
     return { promise: p, resolve: resolve!, reject: reject! };
 }
 
-export function tokenTypeTest(foreignClass: new (...args: any[]) => SyncObject, fn: (token: Token) => any, expectedClass: new (...args: any[]) => SyncObject) {
+export function tokenTypeTest(
+    foreignClass: new (...args: any[]) => SyncObject,
+    fn: (token: Token) => any,
+    expectedClass: new (...args: any[]) => SyncObject,
+) {
     it(`Should throw when the given token is not the token of the ${expectedClass.name} object.`, async () => {
         const foreignEvent = new foreignClass();
 
@@ -192,7 +158,7 @@ export function tokenTypeTest(foreignClass: new (...args: any[]) => SyncObject, 
         } catch (error) {
             // Function threw synchronously
             threwSynchronously = true;
-            expect(error).to.be.an('error');
+            expect(error).toBeInstanceOf(Error);
         }
 
         if (!threwSynchronously) {
@@ -202,14 +168,18 @@ export function tokenTypeTest(foreignClass: new (...args: any[]) => SyncObject, 
                 try {
                     await result;
                     // If we get here, the promise resolved instead of rejecting
-                    expect.fail('Expected promise to be rejected, but it resolved.');
+                    expect.fail(
+                        "Expected promise to be rejected, but it resolved.",
+                    );
                 } catch (error) {
                     // This is expected - the promise should reject
-                    expect(error).to.be.an('error');
+                    expect(error).toBeInstanceOf(Error);
                 }
             } else {
                 // Function returned a value instead of throwing - this is unexpected
-                expect.fail('Expected function to throw or return a rejected promise.');
+                expect.fail(
+                    "Expected function to throw or return a rejected promise.",
+                );
             }
         }
     });

@@ -1,5 +1,4 @@
-import { describe, it } from 'mocha';
-import { expect } from 'chai';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { Queue } from '../../../src/misc/Queue.js';
 
 describe('Queue', () => {
@@ -11,8 +10,8 @@ describe('Queue', () => {
 
     describe('constructor', () => {
         it('should create an empty queue', () => {
-            expect(queue.length).to.equal(0);
-            expect(queue.isEmpty).to.be.true;
+            expect(queue.length).toBe(0);
+            expect(queue.isEmpty).toBe(true);
         });
     });
 
@@ -20,9 +19,9 @@ describe('Queue', () => {
         it('should add an item to the queue', () => {
             const result = queue.enqueue('first');
             
-            expect(queue.length).to.equal(1);
-            expect(queue.isEmpty).to.be.false;
-            expect(result).to.equal(0); // Returns the index
+            expect(queue.length).toBe(1);
+            expect(queue.isEmpty).toBe(false);
+            expect(result).toBe(0); // Returns the index
         });
 
         it('should add multiple items in order', () => {
@@ -30,21 +29,21 @@ describe('Queue', () => {
             queue.enqueue('second');
             queue.enqueue('third');
             
-            expect(queue.length).to.equal(3);
+            expect(queue.length).toBe(3);
         });
 
         it('should return consecutive indices', () => {
             const firstIndex = queue.enqueue('first');
             const secondIndex = queue.enqueue('second');
             
-            expect(firstIndex).to.equal(0);
-            expect(secondIndex).to.equal(1);
+            expect(firstIndex).toBe(0);
+            expect(secondIndex).toBe(1);
         });
     });
 
     describe('dequeue', () => {
         it('should throw error when dequeuing from empty queue', () => {
-            expect(() => queue.dequeue()).to.throw('Cannot dequeue from an empty queue.');
+            expect(() => queue.dequeue()).toThrow('Cannot dequeue from an empty queue.');
         });
 
         it('should return the first item added', () => {
@@ -52,8 +51,8 @@ describe('Queue', () => {
             queue.enqueue('second');
             
             const result = queue.dequeue();
-            expect(result).to.equal('first');
-            expect(queue.length).to.equal(1);
+            expect(result).toBe('first');
+            expect(queue.length).toBe(1);
         });
 
         it('should maintain FIFO order', () => {
@@ -61,16 +60,16 @@ describe('Queue', () => {
             queue.enqueue('second');
             queue.enqueue('third');
             
-            expect(queue.dequeue()).to.equal('first');
-            expect(queue.dequeue()).to.equal('second');
-            expect(queue.dequeue()).to.equal('third');
-            expect(queue.isEmpty).to.be.true;
+            expect(queue.dequeue()).toBe('first');
+            expect(queue.dequeue()).toBe('second');
+            expect(queue.dequeue()).toBe('third');
+            expect(queue.isEmpty).toBe(true);
         });
     });
 
     describe('peek', () => {
         it('should throw error when peeking empty queue', () => {
-            expect(() => queue.peek()).to.throw('Cannot peek on an empty queue.');
+            expect(() => queue.peek()).toThrow('Cannot peek on an empty queue.');
         });
 
         it('should return the first item without removing it', () => {
@@ -78,54 +77,54 @@ describe('Queue', () => {
             queue.enqueue('second');
             
             const result = queue.peek();
-            expect(result).to.equal('first');
-            expect(queue.length).to.equal(2); // Should not change length
+            expect(result).toBe('first');
+            expect(queue.length).toBe(2); // Should not change length
         });
 
         it('should always return the same item until dequeued', () => {
             queue.enqueue('first');
             queue.enqueue('second');
             
-            expect(queue.peek()).to.equal('first');
-            expect(queue.peek()).to.equal('first');
+            expect(queue.peek()).toBe('first');
+            expect(queue.peek()).toBe('first');
             
             queue.dequeue();
-            expect(queue.peek()).to.equal('second');
+            expect(queue.peek()).toBe('second');
         });
     });
 
     describe('length property', () => {
         it('should update correctly with enqueue and dequeue operations', () => {
-            expect(queue.length).to.equal(0);
+            expect(queue.length).toBe(0);
             
             queue.enqueue('item1');
-            expect(queue.length).to.equal(1);
+            expect(queue.length).toBe(1);
             
             queue.enqueue('item2');
-            expect(queue.length).to.equal(2);
+            expect(queue.length).toBe(2);
             
             queue.dequeue();
-            expect(queue.length).to.equal(1);
+            expect(queue.length).toBe(1);
             
             queue.dequeue();
-            expect(queue.length).to.equal(0);
+            expect(queue.length).toBe(0);
         });
     });
 
     describe('isEmpty property', () => {
         it('should return true for empty queue', () => {
-            expect(queue.isEmpty).to.be.true;
+            expect(queue.isEmpty).toBe(true);
         });
 
         it('should return false for non-empty queue', () => {
             queue.enqueue('item');
-            expect(queue.isEmpty).to.be.false;
+            expect(queue.isEmpty).toBe(false);
         });
 
         it('should return true after emptying queue', () => {
             queue.enqueue('item');
             queue.dequeue();
-            expect(queue.isEmpty).to.be.true;
+            expect(queue.isEmpty).toBe(true);
         });
     });
 });
