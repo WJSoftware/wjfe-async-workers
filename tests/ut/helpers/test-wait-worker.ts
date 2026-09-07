@@ -7,9 +7,9 @@ self.onmessage = function(event) {
         let result;
         self.postMessage('running');
         if (waitFunction === 'ManualResetEvent.wait') {
-            result = ManualResetEvent.wait(sharedBuffer, timeout);
+            result = ManualResetEvent.waitSync(sharedBuffer, timeout);
         } else if (waitFunction === 'AutoResetEvent.wait') {
-            result = AutoResetEvent.wait(sharedBuffer, timeout);
+            result = AutoResetEvent.waitSync(sharedBuffer, timeout);
         } else {
             throw new Error('Unknown wait function: ' + waitFunction);
         }
