@@ -4,14 +4,10 @@
 
 [Live Demo](https://wjsoftware.github.io/wjfe-async-workers)
 
-> **⚠️ Important**
-> 
-> This package may not yet be production-ready.  It does work in the browser and in NodeJS using a polyfill like the `web-worker` NPM package.  Unit testing coverage currently covers synchronization objects, but not the asynchronous features.  It is getting there, though.
-
 ## Objectives
 
 1. To provide friendly `async/await` syntax to the Node and web workers world.
-2. To provide thread-safe, atomic synchronization objects like the ones found in other runtimes like .Net
+2. To provide thread-safe, atomic synchronization objects like the ones found in other runtimes like .Net.
 
 ## Quickstart
 
@@ -28,7 +24,7 @@ the previous points.
 5. Start worker tasks by using the `AsyncWorker.enqueue` property.  The functions found in this object return an object 
 of type `WorkItem` that exposes the `promise` property and the `cancel()` method.
 6. Await the promise to obtain the worker's result.  The promise completes when the task finishes.  The promise rejects 
-on unhandled errors in the worker side or when the task is cancelled.
+on unhandled errors in the worker side, when the task is cancelled or the worker is terminated.
 
 > **How can I cancel the task?** Use `terminate()`.  NO!  Just kidding.  We have the good stuff.  Keep reading.
 
@@ -38,8 +34,7 @@ Write your worker.  The following example is a simple worker that works in steps
 the way you need to, then calculate something (the running total of some property):
 
 ```typescript
-// ./my-types.d.ts
-import type { MyData } from './my-types.js';
+import type { MyData } from './my-types.js'; // ./my-types.d.ts or similar
 import { workerListener } from '@wjfe/async-workers';
 
 let workerData: MyData[];
@@ -59,7 +54,9 @@ export const myWorker = {
         workerData = payload;
     },
     sortBy(payload: { sortKey: string; desc: boolean; }) {
-        workerData.sort(getComparerForKey(payload.sortKey, payload.desc));
+        workerData.sort(
+            getComparerForKey(payload.sortKey, payload.desc)
+        );
     },
     calculateRunningTotal() {
         return runningTotal();
@@ -89,14 +86,20 @@ This is what needs to be done in order to obtain an object that commands the wor
 
 ```typescript
 import { myWorker } from './myWorker.js';
-// Vite-specific.  May also work with other bundlers.  Consult your bundler's documentation.
+// Vite-specific.  May also work with other bundlers.
+// Consult your bundler's documentation.
 import myWorkerCtor from './myWorker.js?worker';
 import { AsyncWorker } from '@wjfe/async-workers';
 
-const myWorkerController = new AsyncWorker(new myWorkerCtor(), myWorker);
+const myWorkerController = new AsyncWorker(
+    new myWorkerCtor(),
+    myWorker
+);
 
-// Done.  Do what you must to get this controller to the places where is needed.
-// For example, this could be a module and the controller could be exported.
+// Done.  Do what you must to get this controller
+// to the places where is needed.  For example,
+// this could be a module and the controller could
+// be exported.
 export myWorkerController;
 ```
 
@@ -107,7 +110,10 @@ import { myWorkerController } from './myModule.js';
 
 // Use the "enqueue" property to enqueue the worker's tasks and obtain a WorkItem object.
 const initWorkItem = myWorkerController.enqueue.init(aBunchOfData);
-const defaultSortWorkItem = myWorkerController.enqueue.sortBy({ key: 'eventDate', desc: false });
+const defaultSortWorkItem = myWorkerController.enqueue.sortBy({
+    key: 'eventDate',
+    desc: false,
+});
 const defaultRunningTotalWorkItem = myWorkerController.enqueue.calculateRunningTotal();
 ```
 
@@ -115,7 +121,7 @@ Yes!  The above is valid:  You may queue up as many tasks as you wish without ha
 previous ones, even if the worker is asynchronous (uses `async/await`).  The worker controller will keep perfect record 
 of the order in which the tasks must be run.
 
-This table shows through examples how various call signatures change from from worker to enqueue object:
+This table shows through examples how various call signatures change from worker to enqueue object:
 
 | Worker Function | Enqueue Function |
 | - | - |
@@ -163,7 +169,11 @@ In reality, the functions of the worker's tasks object in the quickstart are sim
 the tasks object like this:
 
 ```typescript
-import { workerListener, type PostFn, Token } from '@wjfe/async-workers';
+import {
+    workerListener,
+    type PostFn,
+    type Token,
+} from '@wjfe/async-workers';
 
 ...
 
@@ -203,23 +213,27 @@ account for these extra messages in the UI side.  This is done when the work ite
 ```typescript
 const defaultRunningTotalWorkItem = myWorkerController.enqueue.calculateRunningTotal(undefined, {
     processMessage: (payload: any) => {
-        // Examine the payload and determine whether or not, based on its contents, the work item's 
-        // promise should resolve or not.
+        // Examine the payload and determine whether or not,
+        // based on its contents, the work item's promise
+        // should resolve or not.
         if (payloadIsProgressReport(payload) || payloadIsPartialResult(payload)) {
-            // A progress report or partial result.  Don't resolve the work item yet.
+            // A progress report or partial result.
+            // Don't resolve the work item yet.
             return false;
         }
-        // Payload is not a known payload.  There are 2 options:  It's the task's return value, or it's
-        // an unknown message, which should be impossible, but have this in the back of your head.
+        // Payload is not a known payload.  There are 2 options:
+        // It's the task's return value, or it's an unknown message,
+        // which should be impossible, but have this in the back of
+        // your head.
         if (isExpectedReturnValue(payload)) {
-            // Ok, this is the return value, so the task completed.  Allow the work item's promise to resolve.
+            // Ok, this is the return value, so the task completed.
+            // Allow the work item's promise to resolve.
             return true;
         }
-        else {
-            // You may choose to ignore the unknown payload by doing nothing and returning false,
-            // or you may do something else.  Your choice.
-            return false;
-        }
+        // You may choose to ignore the unknown payload by doing
+        // nothing and returning false, or you may do something
+        // else.  Your choice.
+        return false;
     }
 });
 ```
@@ -247,13 +261,13 @@ export const myWorker = {
     calculateRunningTotal(_: undefined, post: PostFn, cancelToken?: Token) {
         return runningTotal();
     }
-    supplyMissingOrUpdatedDataWhileInTheAir(theData: UpdatedData) {
+    riskyDataUpdate(theData: UpdatedData) {
         ...
     }
 };
 ```
 
-Inside `processMessage`, do `myWorkerController.enqueue.supplyMissingOrUpdatedDataWhileInTheAir(theData, { outOfOrder: true })`
+Inside `processMessage`, do `myWorkerController.enqueue.riskyDataUpdate(theData, { outOfOrder: true })`
 and hope for the best.
 
 ## Worker Task Cancellation
@@ -328,7 +342,7 @@ parameter, as seen in the previous section.
 Whenever cancellation is desired, simply call the work item's `cancel()` method.  For more information about this 
 method, refer to [this section](#the-cancel-method).
 
-If you're using `CancellationSource` on your own:
+If you're using `CancellationSource` on your own, like outside the context of async workers:
 
 + Do `const cs = new CancellationSource()` to create a new cancellation source.
 + The token is available via `cs.token`.
@@ -409,15 +423,17 @@ Terminating the worker immediately rejects the promises of all work items, and f
 work items whose promise immediately rejects as well.  Promises that reject due to termination will have a reason 
 object of type `WorkerTerminatedMessage`.
 
-Generally speaking, terminated workers should be disposed.  Do so as fast as possible.
+Terminated workers should be disposed as fast as possible.
+
+### Shared vs Dedicated Worker
+
+The `AsyncWorker` class, upon construction, will duck-type test the provided worker.  If it looks like a shared worker, it will initialize as a controller for a shared worker; otherwise, it will initialize as a controller for a dedicated worker.  Duck-type testing enables any `Worker` polyfill, including the popular `web-worker` for use in Node or any other runtime environment that supports it (maybe Deno, Bun) (server-sided JavaScript).  See the next section.
 
 ## Usage in Node.Js
 
 > Since **v0.2.3**
 
-This package, by design, is for use in the browser.  However, there is this NPM package called [web-worker](https://www.npmjs.com/package/web-worker) that brings the browser API into Node.  This collaboration works OK and enables the use of `@wjfe/async-workers` in Node.
-
-Generally speaking, `AsyncWorker`, upon construction will duck-type test the provided worker.  If it looks like a shared worker, it will initialize as a controller for a shared worker; otherwise, it will initialize as a controller for a dedicated worker.  This should enable any `Worker` polyfill, not just `web-worker`.
+This package, by design, is for use in the browser.  However, there is this NPM package called [web-worker](https://www.npmjs.com/package/web-worker) that brings the browser API into Node.  This collaboration works OK and enables the use of `@wjfe/async-workers` in Node.  The author haven't tested Deno or Bun or any other runtime environment.
 
 ## Roadmap
 
