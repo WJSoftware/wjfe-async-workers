@@ -18,7 +18,7 @@
             in this demo page does polling to condition the wait as opposed to blindly waiting:
         </p>
         <code class="fs-5"><pre>if (!ManualResetEvent.isSignaled(pause)) &#123;
-    ManualResetEvent.wait(pause);
+    ManualResetEvent.waitSync(pause);
 &#125;</pre></code>
         <p>
             Still, even with this modification, you'll see a big difference in times between a pausable and a 

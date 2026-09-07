@@ -7,12 +7,12 @@ export function isSignaled(identifierData: IdentifierData, token: Token) {
     return Atomics.load(token, 0) === 1;
 }
 
-export function wait(identifierData: IdentifierData, token: Token, timeout?: number) {
+export function waitSync(identifierData: IdentifierData, token: Token, timeout?: number) {
     checkToken(token, ...identifierData);
     return Atomics.wait(token, 0, 0, timeout);
 }
 
-export async function waitAsync(identifierData: IdentifierData, token: Token, timeout?: number) {
+export async function wait(identifierData: IdentifierData, token: Token, timeout?: number) {
     checkToken(token, ...identifierData);
     const result = Atomics.waitAsync(token, 0, 0, timeout);
     return result.async ? await result.value : result.value;
@@ -52,8 +52,8 @@ export class ManualResetEvent extends Event {
      * @returns `'ok'` when the waiting is over because the token signaled while waiting on it, `'timed-out'` when the 
      * specified timeout elapsed and the token did not signal, or `'not-equal'` if no wait took place.
      */
-    static wait(token: Token, timeout?: number) {
-        return wait(manualResetEventIdentityData, token, timeout);
+    static waitSync(token: Token, timeout?: number) {
+        return waitSync(manualResetEventIdentityData, token, timeout);
     }
     /**
      * Asynchronously waits on the specified manually-resettable token to be signaled.
@@ -64,7 +64,7 @@ export class ManualResetEvent extends Event {
      * @returns `'ok'` when the waiting is over because the token signaled while waiting on it, `'timed-out'` when the 
      * specified timeout elapsed and the token did not signal, or `'not-equal'` if no wait took place.
      */
-    static waitAsync(token: Token, timeout?: number) {
-        return waitAsync(manualResetEventIdentityData, token, timeout);
+    static wait(token: Token, timeout?: number) {
+        return wait(manualResetEventIdentityData, token, timeout);
     }
 };

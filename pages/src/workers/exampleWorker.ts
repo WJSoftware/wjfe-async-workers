@@ -16,7 +16,7 @@ function isPrimePausable(n: number, pause: Token, cancelToken?: Token) {
     for (let i = 2; i <= n / 2; ++i) {
         CancellationSource.throwIfSignaled(cancelToken);
         if (!ManualResetEvent.isSignaled(pause)) {
-            ManualResetEvent.wait(pause);
+            ManualResetEvent.waitSync(pause);
         }
         if (n % i === 0) {
             return false;
