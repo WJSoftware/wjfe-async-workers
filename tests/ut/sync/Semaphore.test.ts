@@ -23,7 +23,7 @@ describe('Semaphore', () => {
 
         it('Should create disabled semaphore when requested.', () => {
             semaphore = new Semaphore(3, true);
-            expect(Semaphore.acquire(semaphore.token, 0)).toBe('timed-out');
+            expect(Semaphore.acquireSync(semaphore.token, 0)).toBe('timed-out');
         });
     });
 
@@ -50,14 +50,14 @@ describe('Semaphore', () => {
         });
     });
 
-    describe('static acquire', () => {
+    describe('static acquireSync', () => {
         const initialCapacity = 2;
         beforeEach(() => {
             semaphore = new Semaphore(initialCapacity);
         });
 
         it('Should acquire immediately when capacity is available.', () => {
-            const result = Semaphore.acquire(semaphore.token);
+            const result = Semaphore.acquireSync(semaphore.token);
 
             expect(result).not.toBe('timed-out');
             expect(typeof result).toBe('function');
@@ -65,9 +65,9 @@ describe('Semaphore', () => {
 
         it('Should return "timed-out" when timeout occurs.', () => {
             for (let i = 0; i < initialCapacity; i++) {
-                Semaphore.acquire(semaphore.token);
+                Semaphore.acquireSync(semaphore.token);
             }
-            const result = Semaphore.acquire(semaphore.token, 0);
+            const result = Semaphore.acquireSync(semaphore.token, 0);
 
             expect(result).toBe('timed-out');
         });
@@ -75,7 +75,7 @@ describe('Semaphore', () => {
         it('Should wait and acquire when capacity becomes available.', async () => {
             let releaser: Function;
             for (let i = 0; i < initialCapacity; i++) {
-                releaser = Semaphore.acquire(semaphore.token);
+                releaser = Semaphore.acquireSync(semaphore.token);
             }
             const waitAcquire = (await testSemaphoreAcquireInWorker(semaphore.token)).wait;
             releaser!();
@@ -85,23 +85,23 @@ describe('Semaphore', () => {
         });
     });
 
-    describe('static acquireAsync', () => {
+    describe('static acquire', () => {
         const initialCapacity = 2;
         beforeEach(() => {
             semaphore = new Semaphore(initialCapacity);
         });
 
         it('Should acquire immediately when capacity is available.', async () => {
-            const result = await Semaphore.acquireAsync(semaphore.token);
+            const result = await Semaphore.acquire(semaphore.token);
 
             expect(typeof result).toBe('function');
         });
 
         it('Should return "timed-out" when timeout occurs.', async () => {
             for (let i = 0; i < initialCapacity; i++) {
-                Semaphore.acquire(semaphore.token);
+                Semaphore.acquireSync(semaphore.token);
             }
-            const result = await Semaphore.acquireAsync(semaphore.token, 0);
+            const result = await Semaphore.acquire(semaphore.token, 0);
 
             expect(result).toBe('timed-out');
         });
@@ -113,7 +113,7 @@ describe('Semaphore', () => {
         });
 
         it('Should release the semaphore when called.', () => {
-            const releaser = Semaphore.acquire(semaphore.token);
+            const releaser = Semaphore.acquireSync(semaphore.token);
 
             expect(typeof releaser).toBe('function');
             if (typeof releaser === 'function') {
@@ -123,7 +123,7 @@ describe('Semaphore', () => {
         });
 
         it('Should throw error when called twice.', () => {
-            const releaser = Semaphore.acquire(semaphore.token);
+            const releaser = Semaphore.acquireSync(semaphore.token);
 
             if (typeof releaser === 'function') {
                 releaser(); // First release

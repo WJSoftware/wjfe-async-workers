@@ -6,8 +6,8 @@ self.onmessage = function (event) {
     try {
         self.postMessage('running');
         const releaser = timeout !== undefined
-            ? (source === "Mutex" ? Mutex.acquire(token, timeout) : Semaphore.acquire(token, timeout))
-            : (source === "Mutex" ? Mutex.acquire(token) : Semaphore.acquire(token));
+            ? (source === "Mutex" ? Mutex.acquireSync(token, timeout) : Semaphore.acquireSync(token, timeout))
+            : (source === "Mutex" ? Mutex.acquireSync(token) : Semaphore.acquireSync(token));
         self.postMessage({ success: typeof releaser === 'function' });
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
