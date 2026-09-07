@@ -23,9 +23,19 @@ function isSharedWorker(worker: any): worker is SharedWorker {
            typeof worker.port.removeEventListener === 'function';
 }
 
+/**
+ * Represents the function used to enqueue a work item for a specific task.
+ * @template Fn The type of the function representing the task.
+ * @param payload The payload to be passed to the task function.
+ * @param options Optional queueing options.
+ * @returns A work item representing the enqueued task.
+ */
 export type EnqueueFn<Fn extends ((...args: any[]) => any) = (() => any)> =
     (payload: Fn extends () => any ? void : Parameters<Fn>[0], options?: QueueingOptions) => WorkItem<ReturnType<Fn>>;
-
+/**
+ * Represents the object used to enqueue work items for all tasks of a worker.
+ * @template T The type of the tasks object, mapping task names to their respective functions.
+ */
 export type Enqueue<T extends Record<string, (...args: any[]) => any>> = {
     [K in keyof T]: EnqueueFn<T[K]>;
 };
