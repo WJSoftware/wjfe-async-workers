@@ -3,6 +3,8 @@ import type { AsyncMessageUntyped, AsyncResponse } from "../types.js";
 
 /**
  * Defines the function provided to worker tasks so workers can communicate back to the calling thread.
+ * @param payload The payload to be sent to the calling thread.
+ * @param options Optional post message options.
  */
 export type PostFn = (payload: any, options?: WindowPostMessageOptions) => void;
 

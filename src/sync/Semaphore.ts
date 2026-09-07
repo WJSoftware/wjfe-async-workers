@@ -134,7 +134,7 @@ function buildReleaser(token: Token) {
     let released = false;
     return (() => {
         if (released) {
-            throw new Error('The semaphore has already been released and cannot be released again.');
+            throw new Error('The mutex or semaphore has already been released and cannot be released again.');
         }
         Atomics.add(token, 0, 1);
         Atomics.notify(token, 0, 1);

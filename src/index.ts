@@ -7,9 +7,12 @@ export { AutoResetEvent } from "./sync/AutoResetEvent.js";
 export { ManualResetEvent } from "./sync/ManualResetEvent.js";
 export { Mutex } from "./sync/Mutex.js";
 export { Semaphore } from "./sync/Semaphore.js";
+export type * from "./sync/Semaphore.js";
 // workers
 export * from './workers/AsyncWorker.js';
+export type * from './workers/AsyncWorker.js';
 export * from "./workers/workerListener.js";
+export type * from "./workers/workerListener.js";
 export * from './workers/WorkerTerminatedMessage.js';
 export * from "./workers/WorkItem.js";
 export type * from "./types.js";
