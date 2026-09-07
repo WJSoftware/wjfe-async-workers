@@ -46,7 +46,7 @@ function buildReleaser(token: Token) {
     }) as Releaser;
 }
 
-export function acquire(identifierData: IdentifierData, token: Token, timeout?: number) {
+export function acquireSync(identifierData: IdentifierData, token: Token, timeout?: number) {
     checkToken(token, ...identifierData);
     while (true) {
         const available = Atomics.load(token, 0);
@@ -64,7 +64,7 @@ export function acquire(identifierData: IdentifierData, token: Token, timeout?: 
     }
 }
 
-export async function acquireAsync(identifierData: IdentifierData, token: Token, timeout?: number) {
+export async function acquire(identifierData: IdentifierData, token: Token, timeout?: number) {
     checkToken(token, ...identifierData);
     while (true) {
         const available = Atomics.load(token, 0);
@@ -101,7 +101,7 @@ export class Semaphore extends SemaphoreInternal {
      * 
      * @example
      * ```typescript
-     * const releaser = Semaphore.acquire(mySemaphoreToken);
+     * const releaser = Semaphore.acquireSync(mySemaphoreToken);
      * try {
      *     ...
      * }
@@ -112,7 +112,7 @@ export class Semaphore extends SemaphoreInternal {
      * @param token Semaphore token to be acquired.
      * @returns A releaser object that can and should be used for releasing the semaphore.
      */
-    static acquire(token: Token): Releaser;
+    static acquireSync(token: Token): Releaser;
     /**
      * Acquires a slot from the specified semaphore's token.
      * 
@@ -122,7 +122,7 @@ export class Semaphore extends SemaphoreInternal {
      * 
      * @example
      * ```typescript
-     * const releaser = Semaphore.acquire(mySemaphoreToken);
+     * const releaser = Semaphore.acquireSync(mySemaphoreToken);
      * try {
      *     ...
      * }
@@ -135,9 +135,9 @@ export class Semaphore extends SemaphoreInternal {
      * @returns A releaser object that can and should be used for releasing the semaphore, or the value `'timed-out'` 
      * if the sempahore could not be acquired before the specified timeout time elapsed.
      */
-    static acquire(token: Token, timeout: number): 'timed-out' | Releaser;
-    static acquire(token: Token, timeout?: number) {
-        return acquire(semaphoreIdentityData, token, timeout);
+    static acquireSync(token: Token, timeout: number): 'timed-out' | Releaser;
+    static acquireSync(token: Token, timeout?: number) {
+        return acquireSync(semaphoreIdentityData, token, timeout);
     }
 
     /**
@@ -149,7 +149,7 @@ export class Semaphore extends SemaphoreInternal {
      * 
      * @example
      * ```typescript
-     * const releaser = await Semaphore.acquireAsync(mySemaphoreToken);
+     * const releaser = await Semaphore.acquire(mySemaphoreToken);
      * try {
      *     ...
      * }
@@ -160,7 +160,7 @@ export class Semaphore extends SemaphoreInternal {
      * @param token Semaphore token to be acquired.
      * @returns A releaser object that can and should be used for releasing the semaphore.
      */
-    static acquireAsync(token: Token): Promise<Releaser>;
+    static acquire(token: Token): Promise<Releaser>;
     /**
      * Asynchronously acquires a slot from the specified semaphore's token.
      * 
@@ -170,7 +170,7 @@ export class Semaphore extends SemaphoreInternal {
      * 
      * @example
      * ```typescript
-     * const releaser = await Semaphore.acquireAsync(mySemaphoreToken);
+     * const releaser = await Semaphore.acquire(mySemaphoreToken);
      * try {
      *     ...
      * }
@@ -183,8 +183,8 @@ export class Semaphore extends SemaphoreInternal {
      * @returns A releaser object that can and should be used for releasing the semaphore, or the value `'timed-out'` 
      * if the sempahore could not be acquired before the specified timeout time elapsed.
      */
-    static acquireAsync(token: Token, timeout: number): Promise<"timed-out" | Releaser>;
-    static acquireAsync(token: Token, timeout?: number) {
-        return acquireAsync(semaphoreIdentityData, token, timeout);
+    static acquire(token: Token, timeout: number): Promise<"timed-out" | Releaser>;
+    static acquire(token: Token, timeout?: number) {
+        return acquire(semaphoreIdentityData, token, timeout);
     }
 }

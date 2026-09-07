@@ -1,6 +1,6 @@
 import type { Token } from "../types.js";
 import { mutexIdentityData } from "./identifiers.js";
-import { acquire, acquireAsync, SemaphoreInternal, type Releaser } from "./Semaphore.js";
+import { acquireSync, acquire, SemaphoreInternal, type Releaser } from "./Semaphore.js";
 
 /**
  * Synchronization object that can be used to grant a single thread exclusive access to a resource or critical section.
@@ -19,7 +19,7 @@ export class Mutex extends SemaphoreInternal {
      * 
      * @example
      * ```typescript
-     * const releaser = await Mutex.acquireAsync(myMutexToken);
+     * const releaser = await Mutex.acquire(myMutexToken);
      * try {
      *     ...
      * }
@@ -30,7 +30,7 @@ export class Mutex extends SemaphoreInternal {
      * @param token Mutex token to be acquired.
      * @returns A releaser object that can and should be used for releasing the mutex.
      */
-    static acquire(token: Token): Releaser;
+    static acquireSync(token: Token): Releaser;
     /**
      * Acquires exclusivity from the specified mutex's token.
      * 
@@ -40,7 +40,7 @@ export class Mutex extends SemaphoreInternal {
      * 
      * @example
      * ```typescript
-     * const releaser = await Mutex.acquireAsync(myMutexToken);
+     * const releaser = await Mutex.acquire(myMutexToken);
      * try {
      *     ...
      * }
@@ -53,11 +53,11 @@ export class Mutex extends SemaphoreInternal {
      * @returns A releaser object that can and should be used for releasing the mutex, or the value `'timed-out'` if 
      * the mutex could not be acquired before the specified timeout time elapsed.
      */
-    static acquire(token: Token, timeout: number): Releaser | "timed-out";
+    static acquireSync(token: Token, timeout: number): Releaser | "timed-out";
+    static acquireSync(token: Token, timeout?: number) {
+        return acquireSync(mutexIdentityData, token, timeout);
+    }
     static acquire(token: Token, timeout?: number) {
         return acquire(mutexIdentityData, token, timeout);
-    }
-    static acquireAsync(token: Token, timeout?: number) {
-        return acquireAsync(mutexIdentityData, token, timeout);
     }
 };
