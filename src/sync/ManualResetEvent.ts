@@ -34,6 +34,33 @@ export class ManualResetEvent extends Event {
         Atomics.store(super.token, 0, 0);
     }
     /**
+     * Checks whether or not this manually-resettable event is in its signaled state.
+     * @returns `true` if the event is signaled, or `false` otherwise.
+     */
+    isSignaled() {
+        return ManualResetEvent.isSignaled(this.token);
+    }
+        /**
+     * Waits on the specified manually-resettable event to be signaled.
+     * @param timeout Maximum time to wait.  Don't specify a value to wait indefinitely.
+     * @returns `'ok'` when the waiting is over because the token signaled while waiting on it, `'timed-out'` when the 
+     * specified timeout elapsed and the token did not signal, or `'not-equal'` if no wait took place.
+     */
+    waitSync(timeout?: number) {
+        return ManualResetEvent.waitSync(this.token, timeout);
+    }
+    /**
+     * Asynchronously waits on the specified manually-resettable event to be signaled.
+     * 
+     * Use this method to stop the current work and release the thread.
+     * @param timeout Maximum time to wait.  Don't specify a value to wait indefinitely.
+     * @returns `'ok'` when the waiting is over because the token signaled while waiting on it, `'timed-out'` when the 
+     * specified timeout elapsed and the token did not signal, or `'not-equal'` if no wait took place.
+     */
+    wait(timeout?: number) {
+        return ManualResetEvent.wait(this.token, timeout);
+    }
+    /**
      * Checks whether or not a manually-resettable event's token is in its signaled state.
      * 
      * This method may be used by worker threads in polling mode.

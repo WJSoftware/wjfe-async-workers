@@ -10,13 +10,15 @@ export type Releaser = () => void;
 export class SemaphoreInternal extends SyncObject {
     #capacity;
     #disabled;
-    constructor(identifier: number, capacity: number, createDisabled: boolean) {
+    #identifierData;
+    constructor(identifierData: IdentifierData, capacity: number, createDisabled: boolean) {
         if (capacity <= 0 || !Number.isInteger(capacity)) {
             throw new Error("A semaphore's capacity can only be a positive integer.");
         }
-        super(identifier, createDisabled ? 0 : capacity);
+        super(identifierData[0], createDisabled ? 0 : capacity);
         this.#capacity = capacity;
         this.#disabled = createDisabled;
+        this.#identifierData = identifierData;
     }
 
     /**
@@ -31,6 +33,100 @@ export class SemaphoreInternal extends SyncObject {
         Atomics.store(this.token, 0, this.#capacity);
         Atomics.notify(this.token, 0);
         return true;
+    }
+    /**
+     * Acquires exclusivity over the mutex or a slot in the semaphore.
+     * 
+     * **IMPORTANT**:  Acquiring a mutex or a semaphore slot halts other work.  Releasing the mutex or semaphore slot 
+     * by invoking the releaser function that this method returns is *imperative*.  Use a `try..finally` construct to 
+     * make sure that the releaser function is always executed, even in the event of an error.
+     * 
+     * @example
+     * ```typescript
+     * const releaser = myMutexOrSemaphore.acquireSync();
+     * try {
+     *     ...
+     * }
+     * finally {
+     *     releaser();
+     * }
+     * ```
+     * @returns A releaser function that can and should be used for releasing the mutex or semaphore slot.
+     */
+    acquireSync(): Releaser;
+    /**
+     * Acquires exclusivity over the mutex or a slot in the semaphore.
+     * 
+     * **IMPORTANT**:  Acquiring a mutex or a semaphore slot halts other work.  Releasing the mutex or semaphore slot 
+     * by invoking the releaser function that this method returns is *imperative*.  Use a `try..finally` construct to 
+     * make sure that the releaser function is always executed, even in the event of an error.
+     * 
+     * @example
+     * ```typescript
+     * const releaser = myMutexOrSemaphore.acquireSync(500);
+     * if (releaser !== "timed-out") {
+     *   try {
+     *     ...
+     *   }
+     *   finally {
+     *     releaser();
+     *   }
+     * }
+     * ```
+     * @param timeout Timeout value in milliseconds to wait for acquisition.
+     * @returns A releaser function that can and should be used for releasing the mutex or semaphore slot, or the value
+     * `'timed-out'` if the mutex or semaphore slot could not be acquired before the specified timeout time elapsed.
+     */
+    acquireSync(timeout: number): Releaser | "timed-out";
+    acquireSync(timeout?: number) {
+        return acquireSync(this.#identifierData, this.token, timeout);
+    }
+    /**
+     * Asynchronously acquires exclusivity over the mutex or a slot in the semaphore.
+     * 
+     * **IMPORTANT**:  Acquiring a mutex or a semaphore slot halts other work.  Releasing the mutex or semaphore slot 
+     * by invoking the releaser function that this method returns is *imperative*.  Use a `try..finally` construct to 
+     * make sure that the releaser function is always executed, even in the event of an error.
+     * 
+     * @example
+     * ```typescript
+     * const releaser = await myMutexOrSemaphore.acquire();
+     * try {
+     *     ...
+     * }
+     * finally {
+     *     releaser();
+     * }
+     * ```
+     * @returns A releaser function that can and should be used for releasing the mutex or semaphore slot.
+     */
+    acquire(): Promise<Releaser>;
+    /**
+     * Asynchronously acquires exclusivity over the mutex or a slot in the semaphore.
+     * 
+     * **IMPORTANT**:  Acquiring a mutex or a semaphore slot halts other work.  Releasing the mutex or semaphore slot
+     * by invoking the releaser function that this method returns is *imperative*.  Use a `try..finally` construct to
+     * make sure that the releaser function is always executed, even in the event of an error.
+     * 
+     * @example
+     * ```typescript
+     * const releaser = await myMutexOrSemaphore.acquire(500);
+     * if (releaser !== "timed-out") {
+     *   try {
+     *     ...
+     *   }
+     *   finally {
+     *     releaser();
+     *   }
+     * }
+     * ```
+     * @param timeout Timeout value in milliseconds to wait for acquisition.
+     * A releaser function that can and should be used for releasing the mutex or semaphore slot, or the value 
+     * `'timed-out'` if the mutex or semaphore slot could not be acquired before the specified timeout time elapsed.
+     */
+    acquire(timeout: number): Promise<"timed-out" | Releaser>;
+    acquire(timeout?: number) {
+        return acquire(this.#identifierData, this.token, timeout);
     }
 };
 
@@ -90,7 +186,7 @@ export async function acquire(identifierData: IdentifierData, token: Token, time
  */
 export class Semaphore extends SemaphoreInternal {
     constructor(capacity: number, createDisabled: boolean = false) {
-        super(semaphoreIdentityData[0], capacity, createDisabled);
+        super(semaphoreIdentityData, capacity, createDisabled);
     }
     /**
      * Acquires a slot from the specified semaphore's token.
@@ -103,10 +199,10 @@ export class Semaphore extends SemaphoreInternal {
      * ```typescript
      * const releaser = Semaphore.acquireSync(mySemaphoreToken);
      * try {
-     *     ...
+     *   ...
      * }
      * finally {
-     *     releaser();
+     *   releaser();
      * }
      * ```
      * @param token Semaphore token to be acquired.
@@ -123,17 +219,19 @@ export class Semaphore extends SemaphoreInternal {
      * @example
      * ```typescript
      * const releaser = Semaphore.acquireSync(mySemaphoreToken);
-     * try {
+     * if (releaser !== "timed-out") {
+     *   try {
      *     ...
-     * }
-     * finally {
+     *   }
+     *   finally {
      *     releaser();
+     *   }
      * }
      * ```
      * @param token Semaphore token to be acquired.
      * @param timeout Optional timeout value in milliseconds to wait for acquisition.
      * @returns A releaser object that can and should be used for releasing the semaphore, or the value `'timed-out'` 
-     * if the sempahore could not be acquired before the specified timeout time elapsed.
+     * if the semaphore could not be acquired before the specified timeout time elapsed.
      */
     static acquireSync(token: Token, timeout: number): 'timed-out' | Releaser;
     static acquireSync(token: Token, timeout?: number) {
@@ -151,10 +249,10 @@ export class Semaphore extends SemaphoreInternal {
      * ```typescript
      * const releaser = await Semaphore.acquire(mySemaphoreToken);
      * try {
-     *     ...
+     *   ...
      * }
      * finally {
-     *     releaser();
+     *   releaser();
      * }
      * ```
      * @param token Semaphore token to be acquired.
@@ -171,17 +269,19 @@ export class Semaphore extends SemaphoreInternal {
      * @example
      * ```typescript
      * const releaser = await Semaphore.acquire(mySemaphoreToken);
-     * try {
+     * if (releaser !== "timed-out") {
+     *   try {
      *     ...
-     * }
-     * finally {
+     *   }
+     *   finally {
      *     releaser();
+     *   }
      * }
      * ```
      * @param token Semaphore token to be acquired.
      * @param timeout Timeout value in milliseconds to wait for acquisition.
      * @returns A releaser object that can and should be used for releasing the semaphore, or the value `'timed-out'` 
-     * if the sempahore could not be acquired before the specified timeout time elapsed.
+     * if the semaphore could not be acquired before the specified timeout time elapsed.
      */
     static acquire(token: Token, timeout: number): Promise<"timed-out" | Releaser>;
     static acquire(token: Token, timeout?: number) {

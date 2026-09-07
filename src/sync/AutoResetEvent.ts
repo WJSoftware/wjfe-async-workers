@@ -12,6 +12,38 @@ export class AutoResetEvent extends Event {
         super(autoResetEventIdentityData[0], 1);
     }
     /**
+     * Checks whether or not this auto-resettable event is in its signaled state.
+     * 
+     * Auto-reset events automatically reset when a thread is freed by it, so expect this function to only return 
+     * `true` if the token has been signaled and there were no threads blocked by it.
+     * @returns `true` if the token is signaled, or `false` otherwise.
+     */
+    isSignaled() {
+        return AutoResetEvent.isSignaled(this.token);
+    }
+    /**
+     * Waits on this auto-resettable event to be signaled.
+     * 
+     * Use this method to block a (worker's) thread for whatever reason.
+     * @param timeout Maximum time to wait.  Don't specify a value to wait indefinitely.
+     * @returns `'ok'` when the waiting is over because the event signaled while waiting on it, `'timed-out'` when the 
+     * specified timeout elapsed and the event did not signal, or `'not-equal'` if no wait took place.
+     */
+    waitSync(timeout?: number) {
+        return AutoResetEvent.waitSync(this.token, timeout);
+    }
+    /**
+     * Asynchronously waits on this auto-resettable event to be signaled.
+     * 
+     * Use this method to stop the current work and release the worker thread (to pick up on new messages, perhaps).
+     * @param timeout Maximum time to wait.  Don't specify a value to wait indefinitely.
+     * @returns `'ok'` when the waiting is over because the event signaled while waiting on it, `'timed-out'` when the 
+     * specified timeout elapsed and the event did not signal, or `'not-equal'` if no wait took place.
+     */
+    wait(timeout?: number) {
+        return AutoResetEvent.wait(this.token, timeout);
+    }
+    /**
      * Checks whether or not an auto-resettable event's token is in its signaled state.
      * 
      * Auto-reset events automatically reset when a thread is freed by it, so expect this function to only return 
